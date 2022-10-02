@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:chipmunk/widgets/dropdown_widget.dart';
 
-class ViewingPage extends StatefulWidget {
-  const ViewingPage({super.key});
+class TrackerPage extends StatefulWidget {
+  const TrackerPage({super.key});
 
   @override
-  State<ViewingPage> createState() => _ViewingState();
+  State<TrackerPage> createState() => _TrackerPageState();
 }
 
-class _ViewingState extends State<ViewingPage> {
+class _TrackerPageState extends State<TrackerPage> {
   String engageValue = "";
   String? selectedMarket, selectedAsset;
 
