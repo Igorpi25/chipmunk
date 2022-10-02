@@ -2,39 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'package:chipmunk/widgets/dropdown_widget.dart';
 
+import '../state_models/tracker.dart';
+
 class TrackerPage extends StatefulWidget {
-  const TrackerPage({super.key});
+  final Tracker tracker;
+  const TrackerPage(this.tracker, {super.key});
 
   @override
   State<TrackerPage> createState() => _TrackerPageState();
 }
 
 class _TrackerPageState extends State<TrackerPage> {
-  String engageValue = "";
-  String? selectedMarket, selectedAsset;
-
-  List<String> _getMarketList() {
-    return ['Forex', 'HKS', 'Yandex', 'Nasa'];
-  }
-
-  List<String> _getAssetList() {
-    return (selectedMarket != null)
-        ? ['AUD/JPY', 'RUB/CNY', 'TCP/IP', 'USD/TNG']
-        : [];
-  }
-
-  void _setMarket(String? value) {
-    setState(() {
-      selectedMarket = value;
-      selectedAsset = null;
-    });
-  }
-
-  void _setAsset(String? value) {
-    setState(() {
-      selectedAsset = value;
-    });
-  }
+  _TrackerPageState();
 
   @override
   Widget build(BuildContext context) {
@@ -53,24 +32,24 @@ class _TrackerPageState extends State<TrackerPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 DropdownWidget(
-                  _getMarketList(),
+                  widget.tracker.markets,
                   "Select market",
-                  selectedMarket,
-                  _setMarket,
+                  widget.tracker.selectedMarket,
+                  (_) => setState(() => widget.tracker.selectMarket(_)),
                 ),
                 DropdownWidget(
-                  _getAssetList(),
+                  widget.tracker.assets,
                   "Select asset",
-                  selectedAsset,
-                  _setAsset,
+                  widget.tracker.selectedAsset,
+                  (_) => setState(() => widget.tracker.selectAsset(_)),
                 ),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.only(top: 16),
                     alignment: AlignmentDirectional.center,
-                    child: ((selectedMarket != null) && (selectedAsset != null))
+                    child: widget.tracker.price == null
                         ? const CircularProgressIndicator()
-                        : null,
+                        : Text(widget.tracker.price?.toStringAsFixed(2) ?? ''),
                   ),
                 ),
               ],

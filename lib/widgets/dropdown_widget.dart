@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DropdownWidget extends StatefulWidget {
-  final List<String> list;
+  final List<String>? list;
   final String? dropdownValue;
   final String hint;
   final Function(String?) callback;
@@ -27,7 +27,7 @@ class _DropdownWidgetState extends State<DropdownWidget> {
           widget.callback(value);
         });
       },
-      items: widget.list.map<DropdownMenuItem<String>>((String value) {
+      items: widget.list?.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
