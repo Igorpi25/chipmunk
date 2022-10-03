@@ -22,10 +22,17 @@ class Tracker {
   double? get price => (selectedAsset != null) ? Random().nextDouble() : null;
 
   void selectMarket(String? value) {
-    if (value == selectedMarket) return;
-
-    selectedMarket = value;
-    selectedAsset = null;
+    if (value == selectedMarket) {
+      return;
+    } else if (value == null) {
+      selectedMarket = value;
+      selectedAsset = null;
+    } else if (markets.contains(value)) {
+      selectedMarket = value;
+      selectedAsset = null;
+    } else {
+      throw Exception('Invalid argument: $value');
+    }
   }
 
   void selectAsset(String? value) {

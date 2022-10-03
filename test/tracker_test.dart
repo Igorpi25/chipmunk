@@ -1,6 +1,7 @@
 import 'package:chipmunk/state_models/asset_provider.dart';
 import 'package:chipmunk/state_models/tracker.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shouldly/shouldly.dart';
 
 class MockAssetProvider implements AssetProvider {
   @override
@@ -29,54 +30,81 @@ void main() {
     tracker = Tracker(mockMarkets(), mockAssetProvider);
   });
 
-  test('No market and asset selected initially', () {
-    expect(tracker.selectedMarket, isNull);
-    expect(tracker.selectedAsset, isNull);
+  group('initially', () {
+    test('selected market should be null', () {
+      tracker.selectedMarket.should.beNull();
+    });
+
+    test('selected asset should be null', () {
+      tracker.selectedAsset.should.beNull();
+    });
+
+    test("markets shouldn't be null", () {
+      tracker.markets.should.not.beNull();
+    });
+
+    test('assets should be null', () {
+      tracker.assets.should.beNull();
+    });
+
+    test('price should be null', () {
+      tracker.price.should.beNull();
+    });
   });
 
-  test('List of markets available initially', () {
-    expect(tracker.markets, isNotNull);
+  group('market select', () {
+    setUp(() {
+      tracker.selectedMarket.should.beNull();
+    });
+
+    test('item contained in markets', () {
+      const forex = 'Forex';
+      tracker.markets.should.contain(forex);
+
+      // Act
+      tracker.selectMarket(forex);
+
+      tracker.selectedMarket.should.be(forex);
+    });
+
+    test('item not contained in markets', () {
+      const nasdaq = 'Nasdaq';
+      tracker.markets.should.not.contain(nasdaq);
+
+      // Act
+      Should.throwException(() => tracker.selectMarket(nasdaq));
+    });
+
+    test('null', () {
+      // Act
+      Should.notThrowException(() => tracker.selectMarket(null));
+
+      tracker.selectedMarket.should.beNull();
+    });
   });
 
-  test('List of assets initially is null', () {
-    expect(tracker.assets, isNull);
-  });
+  group('assets', () {
+    setUp(() {
+      tracker.selectedMarket.should.beNull();
+      tracker.selectedAsset.should.beNull();
+    });
 
-  test('Price is null initially', () {
-    expect(tracker.price, null);
-  });
+    test('is null when market select null', () {
+      //Act
+      tracker.selectMarket(null);
 
-  test('Market selecting', () {
-    expect(tracker.selectedMarket, isNull);
+      tracker.assets.should.beNull();
+    });
 
-    tracker.selectMarket('Forex');
-    expect(tracker.selectedMarket, 'Forex');
-  });
+    test('is not null when market select item contained in markets', () {
+      const forex = 'Forex';
+      tracker.markets.should.contain(forex);
 
-  test('Market null-value selecting', () {
-    expect(tracker.selectedMarket, isNull);
+      // Act
+      tracker.selectMarket(forex);
 
-    tracker.selectMarket(null);
-    expect(tracker.selectedMarket, isNull);
-  });
-
-  test('List of assets is null if selected market null', () {
-    // Before & Act
-    tracker.selectMarket(null);
-
-    // After
-    expect(tracker.assets, isNull);
-  });
-
-  test('List of assets is not null after market selected', () {
-    // Before
-    expect(tracker.assets, isNull);
-
-    // Act
-    tracker.selectMarket('Forex');
-
-    // After
-    expect(tracker.assets, isNotNull);
+      tracker.assets.should.not.beNull();
+    });
   });
 
   test('Selected asset is null after select market', () {
