@@ -5,13 +5,6 @@ abstract class AssetEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadAssets extends AssetEvent {
-  LoadAssets();
-
-  @override
-  List<Object?> get props => [];
-}
-
 class SelectAsset extends AssetEvent {
   final String asset;
 
