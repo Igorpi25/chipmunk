@@ -1,9 +1,15 @@
-import 'package:chipmunk/bloc/page_bloc.dart';
-import 'package:chipmunk/page/loading_page.dart';
 import 'package:chipmunk/repositories/market_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:chipmunk/bloc/loader_bloc.dart';
+import 'package:chipmunk/page/loading_page.dart';
 import 'package:chipmunk/page/tracker_page.dart';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+typedef PageBloc = LoaderBloc<List<String>>;
+typedef PageState = LoaderState<List<String>>;
+typedef PageLoadingState = LoadingState<List<String>>;
+typedef PageLoadedState = LoadedState<List<String>>;
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -14,7 +20,7 @@ class App extends StatelessWidget {
       create: (_) => MarketRepository(),
       child: BlocProvider(
         create: (_) =>
-            PageBloc(_.read<MarketRepository>())..add(StartTracker()),
+            PageBloc(_.read<MarketRepository>().loadMarkets())..add(Load()),
         child: MaterialApp(
           title: 'UI Playground',
           theme: ThemeData(
@@ -22,10 +28,10 @@ class App extends StatelessWidget {
           ),
           home: BlocBuilder<PageBloc, PageState>(
             builder: (context, state) {
-              if (state is PageLoading) {
+              if (state is PageLoadingState) {
                 return const LoadingPage();
-              } else if (state is PageTracker) {
-                return TrackerPage(state.markets);
+              } else if (state is PageLoadedState) {
+                return TrackerPage(state.data);
               } else {
                 throw Exception('Unknown state in PageBloc: $state');
               }
