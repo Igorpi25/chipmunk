@@ -5,8 +5,6 @@ abstract class AssetState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AssetsLoading extends AssetState {}
-
 class AssetsLoaded extends AssetState {
   AssetsLoaded(this.assets);
 

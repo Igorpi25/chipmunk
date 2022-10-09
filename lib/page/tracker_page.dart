@@ -1,4 +1,5 @@
 import 'package:chipmunk/bloc/asset_bloc.dart';
+import 'package:chipmunk/bloc/loader_bloc.dart';
 import 'package:chipmunk/bloc/market_bloc.dart';
 import 'package:chipmunk/bloc/price_bloc.dart';
 import 'package:chipmunk/repositories/asset_repository.dart';
@@ -6,6 +7,11 @@ import 'package:chipmunk/repositories/price_repository.dart';
 import 'package:chipmunk/widgets/dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+typedef RevealBloc = LoaderBloc<List<String>>;
+typedef RevealState = LoaderState<List<String>>;
+typedef RevealLoadingState = LoadingState<List<String>>;
+typedef RevealLoadedState = LoadedState<List<String>>;
 
 class TrackerPage extends StatelessWidget {
   const TrackerPage(this._markets, {super.key});
@@ -54,67 +60,81 @@ class TrackerPage extends StatelessWidget {
                                   (_) => _marketSelected(context, _)),
                               BlocProvider(
                                 key: ValueKey(state.market),
-                                create: (_) => AssetBloc(
-                                    _.read<AssetRepository>(), state.market)
-                                  ..add(LoadAssets()),
-                                child: BlocBuilder<AssetBloc, AssetState>(
-                                  builder: (context, state) {
-                                    if (state is AssetsLoading) {
-                                      return const PlaceholderDropdown(
-                                          'Loading assets ...');
-                                    } else if (state is AssetsLoaded) {
-                                      return RevealedDropdown(
-                                          state.assets,
-                                          'Select asset',
-                                          (_) => _assetSelected(context, _));
-                                    } else if (state is AssetSelected) {
-                                      return Column(
-                                        children: [
-                                          StatedDropdown(
-                                              state.assets,
-                                              state.asset,
-                                              (_) =>
-                                                  _assetSelected(context, _)),
-                                          BlocProvider(
-                                            key: ValueKey(state.asset),
-                                            create: (_) => PriceBloc(
-                                                _.read<PriceRepository>(),
-                                                state.asset)
-                                              ..add(StartPrice()),
-                                            child: BlocBuilder<PriceBloc,
-                                                PriceState>(
-                                              builder: (context, state) {
-                                                return Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 16),
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .center,
-                                                  child: () {
-                                                    if (state is PriceLoading) {
-                                                      return const CircularProgressIndicator();
-                                                    } else if (state
-                                                        is PriceValue) {
-                                                      return Text(
-                                                          'Price: ${state.price}');
-                                                    } else {
-                                                      throw Exception(
-                                                          'Unknown state in PriceBloc: $state');
-                                                    }
-                                                  }(),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    } else {
-                                      throw Exception(
-                                          'Unknown state in AssetBloc: $state');
-                                    }
-                                  },
-                                ),
+                                create: (_) =>
+                                    RevealBloc(_revealLoader(_, state.market))
+                                      ..add(Load()),
+                                child: BlocBuilder<RevealBloc, RevealState>(
+                                    builder: (context, state) {
+                                  if (state is RevealLoadingState) {
+                                    return const PlaceholderDropdown(
+                                        'Assets loading ...');
+                                  } else if (state is RevealLoadedState) {
+                                    return BlocProvider(
+                                      key: ValueKey(state.data),
+                                      create: (_) => AssetBloc(state.data),
+                                      child: BlocBuilder<AssetBloc, AssetState>(
+                                        builder: (context, state) {
+                                          if (state is AssetsLoaded) {
+                                            return RevealedDropdown(
+                                                state.assets,
+                                                'Select asset',
+                                                (_) =>
+                                                    _assetSelected(context, _));
+                                          } else if (state is AssetSelected) {
+                                            return Column(
+                                              children: [
+                                                StatedDropdown(
+                                                    state.assets,
+                                                    state.asset,
+                                                    (_) => _assetSelected(
+                                                        context, _)),
+                                                BlocProvider(
+                                                  key: ValueKey(state.asset),
+                                                  create: (_) => PriceBloc(
+                                                      _.read<PriceRepository>(),
+                                                      state.asset)
+                                                    ..add(StartPrice()),
+                                                  child: BlocBuilder<PriceBloc,
+                                                      PriceState>(
+                                                    builder: (context, state) {
+                                                      return Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(top: 16),
+                                                        alignment:
+                                                            AlignmentDirectional
+                                                                .center,
+                                                        child: () {
+                                                          if (state
+                                                              is PriceLoading) {
+                                                            return const CircularProgressIndicator();
+                                                          } else if (state
+                                                              is PriceValue) {
+                                                            return Text(
+                                                                'Price: ${state.price}');
+                                                          } else {
+                                                            throw Exception(
+                                                                'Unknown state in PriceBloc: $state');
+                                                          }
+                                                        }(),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          } else {
+                                            throw Exception(
+                                                'Unknown state in AssetBloc: $state');
+                                          }
+                                        },
+                                      ),
+                                    );
+                                  } else {
+                                    throw Exception(
+                                        'Unknown state in RevealBloc: $state');
+                                  }
+                                }),
                               ),
                             ],
                           );
@@ -140,5 +160,10 @@ class TrackerPage extends StatelessWidget {
 
   void _assetSelected(BuildContext context, String asset) {
     context.read<AssetBloc>().add(SelectAsset(asset));
+  }
+
+  Future<List<String>> _revealLoader(
+      BuildContext context, String market) async {
+    return context.read<AssetRepository>().loadAssets(market);
   }
 }
