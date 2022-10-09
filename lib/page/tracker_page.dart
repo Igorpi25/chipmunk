@@ -2,14 +2,15 @@ import 'package:chipmunk/bloc/asset_bloc.dart';
 import 'package:chipmunk/bloc/market_bloc.dart';
 import 'package:chipmunk/bloc/price_bloc.dart';
 import 'package:chipmunk/repositories/asset_repository.dart';
-import 'package:chipmunk/repositories/market_repository.dart';
 import 'package:chipmunk/repositories/price_repository.dart';
 import 'package:chipmunk/widgets/dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TrackerPage extends StatelessWidget {
-  const TrackerPage({super.key});
+  const TrackerPage(this._markets, {super.key});
+
+  final List<String> _markets;
 
   @override
   Widget build(BuildContext context) {
@@ -29,26 +30,15 @@ class TrackerPage extends StatelessWidget {
               children: [
                 MultiRepositoryProvider(
                   providers: [
-                    RepositoryProvider<MarketRepository>(
-                        create: (_) => MarketRepository()),
                     RepositoryProvider<AssetRepository>(
                         create: (_) => AssetRepository()),
                     RepositoryProvider<PriceRepository>(
                         create: (_) => PriceRepository()),
                   ],
                   child: BlocProvider(
-                    create: (_) => MarketBloc(_.read<MarketRepository>())
-                      ..add(StartMarkets()),
+                    create: (_) => MarketBloc(_markets),
                     child: BlocBuilder<MarketBloc, MarketState>(
                       builder: (context, state) {
-                        if (state is MarketLoading) {
-                          return Column(
-                            children: const [
-                              PlaceholderDropdown('Loading markets ...'),
-                              PlaceholderDropdown('No assets'),
-                            ],
-                          );
-                        }
                         if (state is MarketsLoaded) {
                           return Column(
                             children: [

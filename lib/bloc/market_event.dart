@@ -5,8 +5,6 @@ abstract class MarketEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class StartMarkets extends MarketEvent {}
-
 class SelectMarket extends MarketEvent {
   SelectMarket(this.market);
   final String market;

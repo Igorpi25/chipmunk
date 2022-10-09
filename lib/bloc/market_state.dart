@@ -5,8 +5,6 @@ abstract class MarketState extends Equatable {
   List<Object?> get props => [];
 }
 
-class MarketLoading extends MarketState {}
-
 class MarketsLoaded extends MarketState {
   MarketsLoaded(this.markets);
 
