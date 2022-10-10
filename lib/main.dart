@@ -29,15 +29,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final message = 'Respond me this text, please';
+  final _message = '{"ticks":"R_100"}';
 
   void _sendToServer() {
-    channel.sink.add(message);
+    _channel.sink.add(_message);
   }
 
-  final channel = WebSocketChannel.connect(
-    Uri.parse('wss://echo.websocket.events'),
+  final _channel = WebSocketChannel.connect(
+    Uri.parse('wss://ws.binaryws.com/websockets/v3?app_id=1089'),
   );
+
+  @override
+  void dispose() {
+    _channel.sink.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder(
-              stream: channel.stream,
+              stream: _channel.stream,
               builder: (context, snapshot) {
                 return Text(snapshot.hasData ? '${snapshot.data}' : '');
               },
@@ -60,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _sendToServer,
-        tooltip: 'Send: $message',
+        tooltip: 'Send: $_message',
         child: const Icon(Icons.send),
       ),
     );
