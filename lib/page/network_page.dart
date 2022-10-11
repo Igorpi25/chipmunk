@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:chipmunk/network/model/tick.dart';
 import 'package:chipmunk/network/response/active_symbols_response.dart';
 import 'package:chipmunk/network/model/symbol.dart';
+import 'package:chipmunk/network/response/ticks_response.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -39,35 +41,41 @@ class _NetworkPageState extends State<NetworkPage> {
         title: const Text('Network Playground'),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              StreamBuilder(
-                stream: _channel.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final Map<String, dynamic> messageMap =
-                        jsonDecode(snapshot.data);
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                StreamBuilder(
+                  stream: _channel.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final Map<String, dynamic> messageMap =
+                          jsonDecode(snapshot.data);
 
-                    final msgType = messageMap['msg_type'];
+                      final msgType = messageMap['msg_type'];
 
-                    if (msgType == 'active_symbols') {
-                      final ActiveSymbolsResponse activeSymbols =
-                          ActiveSymbolsResponse.fromJson(messageMap);
+                      if (msgType == 'active_symbols') {
+                        final ActiveSymbolsResponse response =
+                            ActiveSymbolsResponse.fromJson(messageMap);
 
-                      return _displaySymbols(activeSymbols.symbols);
-                    } else {
-                      return Text('unknown msg_type: $msgType');
+                        return _displaySymbols(response.symbols);
+                      } else if (msgType == 'tick') {
+                        final TicksResponse response =
+                            TicksResponse.fromJson(messageMap);
+
+                        return _displayTick(response.tick);
+                      } else {
+                        return Text('unknown msg_type: $msgType');
+                      }
                     }
-                  }
 
-                  return const Text('snapshot hasn`t data');
-                },
-              ),
-            ],
+                    return const Text('snapshot hasn`t data');
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -101,5 +109,9 @@ class _NetworkPageState extends State<NetworkPage> {
     return Column(
         children:
             symbols.map<Widget>((symbol) => Text(symbol.toString())).toList());
+  }
+
+  Widget _displayTick(Tick tick) {
+    return Text(tick.toString());
   }
 }
