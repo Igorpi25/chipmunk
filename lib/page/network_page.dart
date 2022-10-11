@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:chipmunk/network/model/active_symbols.dart';
+import 'package:chipmunk/network/model/symbol.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -34,17 +38,37 @@ class _NetworkPageState extends State<NetworkPage> {
       appBar: AppBar(
         title: const Text('Network Playground'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            StreamBuilder(
-              stream: _channel.stream,
-              builder: (context, snapshot) {
-                return Text(snapshot.hasData ? '${snapshot.data}' : '');
-              },
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              StreamBuilder(
+                stream: _channel.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final Map<String, dynamic> messageMap =
+                        jsonDecode(snapshot.data);
+
+                    final msgType = messageMap['msg_type'];
+
+                    if (msgType == 'active_symbols') {
+                      final ActiveSymbols activeSymbols =
+                          ActiveSymbols.fromJson(messageMap);
+
+                      return _displaySymbols(activeSymbols.symbols);
+                    } else {
+                      return Text('unknown msg_type: $msgType');
+                    }
+                  }
+
+                  return const Text('snapshot hasn`t data');
+                },
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Row(
@@ -53,11 +77,11 @@ class _NetworkPageState extends State<NetworkPage> {
         children: [
           _floatingButton(_messageActiveSymbols, const Icon(Icons.list)),
           Container(
-            width: 20,
+            width: 16,
           ),
           _floatingButton(_messageTick, const Icon(Icons.send)),
           Container(
-            width: 10,
+            width: 8,
           ),
           _floatingButton(_messageForget, const Icon(Icons.close)),
         ],
@@ -71,5 +95,11 @@ class _NetworkPageState extends State<NetworkPage> {
       tooltip: 'Send: $message',
       child: icon,
     );
+  }
+
+  Widget _displaySymbols(List<Symbol> symbols) {
+    return Column(
+        children:
+            symbols.map<Widget>((symbol) => Text(symbol.toString())).toList());
   }
 }
