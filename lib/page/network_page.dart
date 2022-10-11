@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:chipmunk/network/model/active_symbols.dart';
+import 'package:chipmunk/network/response/active_symbols_response.dart';
 import 'package:chipmunk/network/model/symbol.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -55,8 +55,8 @@ class _NetworkPageState extends State<NetworkPage> {
                     final msgType = messageMap['msg_type'];
 
                     if (msgType == 'active_symbols') {
-                      final ActiveSymbols activeSymbols =
-                          ActiveSymbols.fromJson(messageMap);
+                      final ActiveSymbolsResponse activeSymbols =
+                          ActiveSymbolsResponse.fromJson(messageMap);
 
                       return _displaySymbols(activeSymbols.symbols);
                     } else {
