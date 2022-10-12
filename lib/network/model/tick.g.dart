@@ -8,8 +8,10 @@ part of 'tick.dart';
 
 Tick _$TickFromJson(Map<String, dynamic> json) => Tick(
       (json['quote'] as num).toDouble(),
+      json['id'] as String,
     );
 
 Map<String, dynamic> _$TickToJson(Tick instance) => <String, dynamic>{
-      'quote': instance.price,
+      'quote': instance.quote,
+      'id': instance.subscriptionId,
     };

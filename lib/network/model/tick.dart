@@ -5,15 +5,16 @@ part 'tick.g.dart';
 
 @JsonSerializable()
 class Tick extends Equatable {
-  const Tick(this.price);
+  const Tick(this.quote, this.subscriptionId);
 
-  @JsonKey(name: 'quote')
-  final double price;
+  final double quote;
+  @JsonKey(name: 'id')
+  final String subscriptionId;
 
   factory Tick.fromJson(Map<String, dynamic> json) => _$TickFromJson(json);
 
   Map<String, dynamic> toJson() => _$TickToJson(this);
 
   @override
-  List<Object?> get props => [price];
+  List<Object?> get props => [quote, subscriptionId];
 }
