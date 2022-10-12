@@ -5,15 +5,11 @@ abstract class PriceEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class StartPrice extends PriceEvent {
-  StartPrice();
-  @override
-  List<Object?> get props => [];
-}
+class StartPrice extends PriceEvent {}
 
 class TickPrice extends PriceEvent {
   TickPrice(this.price);
-  final String price;
+  final Price price;
   @override
   List<Object?> get props => [price];
 }

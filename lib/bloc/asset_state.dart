@@ -8,7 +8,7 @@ abstract class AssetState extends Equatable {
 class AssetsLoaded extends AssetState {
   AssetsLoaded(this.assets);
 
-  final List<String> assets;
+  final List<Asset> assets;
 
   @override
   List<Object?> get props => [assets];
@@ -17,8 +17,8 @@ class AssetsLoaded extends AssetState {
 class AssetSelected extends AssetState {
   AssetSelected(this.asset, this.assets);
 
-  final String asset;
-  final List<String> assets;
+  final Asset asset;
+  final List<Asset> assets;
 
   @override
   List<Object?> get props => [asset, assets];

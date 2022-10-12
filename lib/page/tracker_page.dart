@@ -2,21 +2,62 @@ import 'package:chipmunk/bloc/asset_bloc.dart';
 import 'package:chipmunk/bloc/loader_bloc.dart';
 import 'package:chipmunk/bloc/market_bloc.dart';
 import 'package:chipmunk/bloc/price_bloc.dart';
-import 'package:chipmunk/repositories/asset_repository.dart';
-import 'package:chipmunk/repositories/price_repository.dart';
+import 'package:chipmunk/data/mock/repository/mock_asset_repository.dart';
+import 'package:chipmunk/data/mock/repository/mock_price_repository.dart';
+import 'package:chipmunk/domain/model/asset.dart';
+import 'package:chipmunk/domain/model/market.dart';
+import 'package:chipmunk/domain/repository/asset_repository.dart';
+import 'package:chipmunk/domain/repository/price_repository.dart';
 import 'package:chipmunk/widgets/dropdown.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-typedef RevealBloc = LoaderBloc<List<String>>;
-typedef RevealState = LoaderState<List<String>>;
-typedef RevealLoadingState = LoadingState<List<String>>;
-typedef RevealLoadedState = LoadedState<List<String>>;
+typedef RevealBloc = LoaderBloc<List<Asset>>;
+typedef RevealState = LoaderState<List<Asset>>;
+typedef RevealLoadingState = LoadingState<List<Asset>>;
+typedef RevealLoadedState = LoadedState<List<Asset>>;
+
+class MarketDropdownViewmodel extends Equatable {
+  MarketDropdownViewmodel.from(Market market)
+      : name = market.name,
+        id = market.id;
+
+  final String name, id;
+
+  Market toMarket() => Market(id, name);
+
+  @override
+  String toString() {
+    return name;
+  }
+
+  @override
+  List<Object?> get props => [name, id];
+}
+
+class AssetDropdownViewmodel extends Equatable {
+  AssetDropdownViewmodel.from(Asset market)
+      : name = market.name,
+        id = market.id;
+
+  final String name, id;
+
+  Asset toAsset() => Asset(id, name);
+
+  @override
+  String toString() {
+    return name;
+  }
+
+  @override
+  List<Object?> get props => [name, id];
+}
 
 class TrackerPage extends StatelessWidget {
   const TrackerPage(this._markets, {super.key});
 
-  final List<String> _markets;
+  final List<Market> _markets;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +78,9 @@ class TrackerPage extends StatelessWidget {
                 MultiRepositoryProvider(
                   providers: [
                     RepositoryProvider<AssetRepository>(
-                        create: (_) => AssetRepository()),
+                        create: (_) => MockAssetRepository()),
                     RepositoryProvider<PriceRepository>(
-                        create: (_) => PriceRepository()),
+                        create: (_) => MockPriceRepository()),
                   ],
                   child: BlocProvider(
                     create: (_) => MarketBloc(_markets),
@@ -48,7 +89,12 @@ class TrackerPage extends StatelessWidget {
                         if (state is MarketsLoaded) {
                           return Column(
                             children: [
-                              RevealedDropdown(state.markets, 'Select market',
+                              RevealedDropdown<MarketDropdownViewmodel>(
+                                  state.markets
+                                      .map((market) =>
+                                          MarketDropdownViewmodel.from(market))
+                                      .toList(),
+                                  'Select market',
                                   (_) => _marketSelected(context, _)),
                               const PlaceholderDropdown('No assets'),
                             ],
@@ -56,7 +102,12 @@ class TrackerPage extends StatelessWidget {
                         } else if (state is MarketSelected) {
                           return Column(
                             children: [
-                              StatedDropdown(state.markets, state.market,
+                              StatedDropdown<MarketDropdownViewmodel>(
+                                  state.markets
+                                      .map((market) =>
+                                          MarketDropdownViewmodel.from(market))
+                                      .toList(),
+                                  MarketDropdownViewmodel.from(state.market),
                                   (_) => _marketSelected(context, _)),
                               BlocProvider(
                                 key: ValueKey(state.market),
@@ -75,17 +126,28 @@ class TrackerPage extends StatelessWidget {
                                       child: BlocBuilder<AssetBloc, AssetState>(
                                         builder: (context, state) {
                                           if (state is AssetsLoaded) {
-                                            return RevealedDropdown(
-                                                state.assets,
+                                            return RevealedDropdown<
+                                                    AssetDropdownViewmodel>(
+                                                state.assets
+                                                    .map((asset) =>
+                                                        AssetDropdownViewmodel
+                                                            .from(asset))
+                                                    .toList(),
                                                 'Select asset',
                                                 (_) =>
                                                     _assetSelected(context, _));
                                           } else if (state is AssetSelected) {
                                             return Column(
                                               children: [
-                                                StatedDropdown(
-                                                    state.assets,
-                                                    state.asset,
+                                                StatedDropdown<
+                                                        AssetDropdownViewmodel>(
+                                                    state.assets
+                                                        .map((asset) =>
+                                                            AssetDropdownViewmodel
+                                                                .from(asset))
+                                                        .toList(),
+                                                    AssetDropdownViewmodel.from(
+                                                        state.asset),
                                                     (_) => _assetSelected(
                                                         context, _)),
                                                 BlocProvider(
@@ -154,16 +216,16 @@ class TrackerPage extends StatelessWidget {
     );
   }
 
-  void _marketSelected(BuildContext context, String market) {
-    context.read<MarketBloc>().add(SelectMarket(market));
+  void _marketSelected(
+      BuildContext context, MarketDropdownViewmodel viewmodel) {
+    context.read<MarketBloc>().add(SelectMarket(viewmodel.toMarket()));
   }
 
-  void _assetSelected(BuildContext context, String asset) {
-    context.read<AssetBloc>().add(SelectAsset(asset));
+  void _assetSelected(BuildContext context, AssetDropdownViewmodel viewmodel) {
+    context.read<AssetBloc>().add(SelectAsset(viewmodel.toAsset()));
   }
 
-  Future<List<String>> _revealLoader(
-      BuildContext context, String market) async {
+  Future<List<Asset>> _revealLoader(BuildContext context, Market market) async {
     return context.read<AssetRepository>().loadAssets(market);
   }
 }

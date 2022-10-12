@@ -1,3 +1,4 @@
+import 'package:chipmunk/domain/model/market.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,7 +10,7 @@ class MarketBloc extends Bloc<MarketEvent, MarketState> {
     on<SelectMarket>(_onSelected);
   }
 
-  final List<String> _markets;
+  final List<Market> _markets;
 
   Future<void> _onSelected(
       SelectMarket event, Emitter<MarketState> emit) async {

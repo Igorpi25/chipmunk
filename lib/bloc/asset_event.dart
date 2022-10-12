@@ -6,7 +6,7 @@ abstract class AssetEvent extends Equatable {
 }
 
 class SelectAsset extends AssetEvent {
-  final String asset;
+  final Asset asset;
 
   SelectAsset(this.asset);
 

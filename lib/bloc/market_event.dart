@@ -7,7 +7,7 @@ abstract class MarketEvent extends Equatable {
 
 class SelectMarket extends MarketEvent {
   SelectMarket(this.market);
-  final String market;
+  final Market market;
   @override
   List<Object?> get props => [market];
 }

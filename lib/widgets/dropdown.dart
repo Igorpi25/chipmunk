@@ -1,47 +1,44 @@
 import 'package:flutter/material.dart';
 
-abstract class _Dropdown extends StatelessWidget {
-  final List<String>? _list;
-  final String? _value;
+abstract class _Dropdown<T> extends StatelessWidget {
+  final List<T>? _list;
+  final T? _value;
   final String? _hint;
-  final Function(String)? _callback;
+  final Function(T)? _callback;
 
   const _Dropdown(this._list, this._value, this._hint, this._callback,
       {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
+    return DropdownButton<T>(
       hint: Text(_hint ?? ""),
       value: _value,
       isExpanded: true,
-      onChanged: (String? selectedValue) {
+      onChanged: (T? selectedValue) {
         final callback = _callback;
         if (selectedValue != null &&
             selectedValue != _value &&
             callback != null) callback(selectedValue);
       },
-      items: _list?.map<DropdownMenuItem<String>>((_) {
-        return DropdownMenuItem<String>(
+      items: _list?.map<DropdownMenuItem<T>>((_) {
+        return DropdownMenuItem<T>(
           value: _,
-          child: Text(_),
+          child: Text(_.toString()),
         );
       }).toList(),
     );
   }
 }
 
-class RevealedDropdown extends _Dropdown {
-  const RevealedDropdown(
-      List<String> list, String hint, Function(String) callback,
+class RevealedDropdown<T> extends _Dropdown<T> {
+  const RevealedDropdown(List<T> list, String hint, Function(T) callback,
       {super.key})
       : super(list, null, hint, callback);
 }
 
-class StatedDropdown extends _Dropdown {
-  const StatedDropdown(
-      List<String> list, String value, Function(String) callback,
-      {super.key})
+class StatedDropdown<T> extends _Dropdown<T> {
+  const StatedDropdown(List<T> list, T value, Function(T) callback, {super.key})
       : super(list, value, null, callback);
 }
 

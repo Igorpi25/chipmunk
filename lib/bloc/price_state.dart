@@ -9,7 +9,7 @@ class PriceLoading extends PriceState {}
 
 class PriceValue extends PriceState {
   PriceValue(this.price);
-  final String price;
+  final Price price;
   @override
   List<Object?> get props => [price];
 }

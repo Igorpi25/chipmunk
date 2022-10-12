@@ -1,5 +1,7 @@
 import 'dart:async';
-import 'package:chipmunk/repositories/price_repository.dart';
+import 'package:chipmunk/domain/model/asset.dart';
+import 'package:chipmunk/domain/model/price.dart';
+import 'package:chipmunk/domain/repository/price_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,8 +15,8 @@ class PriceBloc extends Bloc<PriceEvent, PriceState> {
   }
 
   final PriceRepository _priceRepository;
-  final String _asset;
-  StreamSubscription<String>? _tickerSubscription;
+  final Asset _asset;
+  StreamSubscription<Price>? _tickerSubscription;
 
   @override
   Future<void> close() {

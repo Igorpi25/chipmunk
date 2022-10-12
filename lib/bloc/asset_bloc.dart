@@ -1,3 +1,4 @@
+import 'package:chipmunk/domain/model/asset.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,11 +10,11 @@ class AssetBloc extends Bloc<AssetEvent, AssetState> {
     on<SelectAsset>(_onSelectAsset);
   }
 
-  final List<String> _assets;
+  final List<Asset> _assets;
 
   Future<void> _onSelectAsset(
       SelectAsset event, Emitter<AssetState> emit) async {
-    final String asset = event.asset;
+    final Asset asset = event.asset;
     emit(AssetSelected(asset, _assets));
   }
 }

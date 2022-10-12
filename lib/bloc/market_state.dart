@@ -8,7 +8,7 @@ abstract class MarketState extends Equatable {
 class MarketsLoaded extends MarketState {
   MarketsLoaded(this.markets);
 
-  final List<String> markets;
+  final List<Market> markets;
 
   @override
   List<Object?> get props => [markets];
@@ -17,8 +17,8 @@ class MarketsLoaded extends MarketState {
 class MarketSelected extends MarketState {
   MarketSelected(this.market, this.markets);
 
-  final List<String> markets;
-  final String market;
+  final List<Market> markets;
+  final Market market;
 
   @override
   List<Object?> get props => [market, markets];
