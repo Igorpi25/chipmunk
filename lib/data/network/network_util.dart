@@ -1,10 +1,9 @@
-import 'package:chipmunk/data/network/mapper/asset_mapper.dart';
 import 'package:chipmunk/data/network/mapper/price_mapper.dart';
-import 'package:chipmunk/data/network/mapper/market_mapper.dart';
 import 'package:chipmunk/data/network/request/active_symbols_request.dart';
 import 'package:chipmunk/data/network/request/tick_request.dart';
 import 'package:chipmunk/data/network/response/active_symbols_response.dart';
 import 'package:chipmunk/data/network/response/ticks_response.dart';
+import 'package:chipmunk/data/network/service/cache_service.dart';
 import 'package:chipmunk/data/network/service/network_service.dart';
 import 'package:chipmunk/domain/model/asset.dart';
 import 'package:chipmunk/domain/model/market.dart';
@@ -14,15 +13,13 @@ class NetworkUtil {
   NetworkUtil(this._networkService);
 
   final NetworkService _networkService;
+  final _cacheService = CacheService();
 
   Stream<Price> getTickStream(Asset asset) {
-    // Send request
     _sendTickRequest(asset);
 
-    // Hook Tick's from service
     final ticksStream = _hookTickResponse();
 
-    // Map ticks to prices
     final pricesStream = ticksStream
         .map<Price>((tickResponse) => PriceMapper.fromTick(tickResponse.tick));
 
@@ -30,34 +27,31 @@ class NetworkUtil {
   }
 
   Future<List<Market>> getMarkets() async {
-    // Send request to service
+    if (_cacheService.isCached) {
+      return _cacheService.getMarkets();
+    }
+
     _sendActiveSymbolsRequest();
 
-    // Wait response from service
     final response = await _hookActiveSymbolsResponse();
 
-    // Transfrom List<Symbols> to List<Market>
-    return response.symbols.fold<List<Market>>(
-        [],
-        (markets, symbol) =>
-            markets.any((market) => market.id == symbol.marketName)
-                ? markets
-                : [...markets, MarketMapper.fromSymbol(symbol)]);
+    _cacheService.setSymbols(response.symbols);
+
+    return _cacheService.getMarkets();
   }
 
   Future<List<Asset>> getAssets(Market market) async {
-    // Send request to service
+    if (_cacheService.isCached) {
+      return _cacheService.getAssets(market.id);
+    }
+
     _sendActiveSymbolsRequest();
 
-    // Wait response from service
     final response = await _hookActiveSymbolsResponse();
 
-    // Transfrom List<Symbols> to List<Asset>
-    return response.symbols.fold<List<Asset>>(
-        [],
-        (assets, symbol) => (symbol.market == market.id)
-            ? [...assets, AssetMapper.fromSymbol(symbol)]
-            : assets);
+    _cacheService.setSymbols(response.symbols);
+
+    return _cacheService.getAssets(market.id);
   }
 
   void _sendTickRequest(Asset asset) {
