@@ -9,8 +9,8 @@ import 'package:chipmunk/data/network/response/ticks_response.dart';
 import 'package:chipmunk/data/network/service/network_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class BinaryService extends NetworkService {
-  BinaryService();
+class BinaryNetworkService extends NetworkService {
+  BinaryNetworkService();
 
   static const _endpoint = 'wss://ws.binaryws.com/websockets/v3?app_id=1089';
   final WebSocketChannel _channel = WebSocketChannel.connect(

@@ -10,7 +10,7 @@ import 'package:chipmunk/data/network/model/symbol.dart';
 import 'package:chipmunk/data/network/response/forget_response.dart';
 import 'package:chipmunk/data/network/response/response.dart';
 import 'package:chipmunk/data/network/response/ticks_response.dart';
-import 'package:chipmunk/data/network/service/binary_service.dart';
+import 'package:chipmunk/data/network/service/binary_network_service.dart';
 import 'package:flutter/material.dart';
 
 class NetworkPage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _NetworkPageState extends State<NetworkPage> {
     _networkService.send(request);
   }
 
-  final _networkService = BinaryService();
+  final _networkService = BinaryNetworkService();
   // final _networkService = MockNetworkService();
 
   @override
