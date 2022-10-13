@@ -47,4 +47,9 @@ class MockNetworkService extends NetworkService {
       'active_symbols',
     ));
   }
+
+  @override
+  void dispose() {
+    _streamController.close();
+  }
 }
