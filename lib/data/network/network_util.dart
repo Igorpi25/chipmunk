@@ -1,5 +1,6 @@
+import 'package:chipmunk/data/network/mapper/asset_mapper.dart';
 import 'package:chipmunk/data/network/mapper/price_mapper.dart';
-import 'package:chipmunk/data/network/mapper/symbol_mapper.dart';
+import 'package:chipmunk/data/network/mapper/market_mapper.dart';
 import 'package:chipmunk/data/network/request/active_symbols_request.dart';
 import 'package:chipmunk/data/network/request/tick_request.dart';
 import 'package:chipmunk/data/network/response/active_symbols_response.dart';
@@ -44,8 +45,19 @@ class NetworkUtil {
                 : [...markets, MarketMapper.fromSymbol(symbol)]);
   }
 
-  Future<List<Asset>> getAssets(Market market) {
-    throw Exception('getAssets unimplemented');
+  Future<List<Asset>> getAssets(Market market) async {
+    // Send request to service
+    _sendActiveSymbolsRequest();
+
+    // Wait response from service
+    final response = await _hookActiveSymbolsResponse();
+
+    // Transfrom List<Symbols> to List<Asset>
+    return response.symbols.fold<List<Asset>>(
+        [],
+        (assets, symbol) => (symbol.market == market.id)
+            ? [...assets, AssetMapper.fromSymbol(symbol)]
+            : assets);
   }
 
   void _sendTickRequest(Asset asset) {
