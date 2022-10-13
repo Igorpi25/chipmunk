@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:chipmunk/network/model/tick.dart';
-import 'package:chipmunk/network/request/active_symbols_request.dart';
-import 'package:chipmunk/network/request/forget_request.dart';
-import 'package:chipmunk/network/request/request.dart';
-import 'package:chipmunk/network/request/tick_request.dart';
-import 'package:chipmunk/network/response/active_symbols_response.dart';
-import 'package:chipmunk/network/model/symbol.dart';
-import 'package:chipmunk/network/response/forget_response.dart';
-import 'package:chipmunk/network/response/ticks_response.dart';
+import 'package:chipmunk/data/network/model/tick.dart';
+import 'package:chipmunk/data/network/request/active_symbols_request.dart';
+import 'package:chipmunk/data/network/request/forget_request.dart';
+import 'package:chipmunk/data/network/request/request.dart';
+import 'package:chipmunk/data/network/request/tick_request.dart';
+import 'package:chipmunk/data/network/response/active_symbols_response.dart';
+import 'package:chipmunk/data/network/model/symbol.dart';
+import 'package:chipmunk/data/network/response/forget_response.dart';
+import 'package:chipmunk/data/network/response/ticks_response.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

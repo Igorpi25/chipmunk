@@ -1,5 +1,5 @@
-import 'package:chipmunk/network/model/tick.dart';
-import 'package:chipmunk/network/response/response.dart';
+import 'package:chipmunk/data/network/model/tick.dart';
+import 'package:chipmunk/data/network/response/response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'ticks_response.g.dart';

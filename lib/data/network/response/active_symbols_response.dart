@@ -1,6 +1,6 @@
-import 'package:chipmunk/network/response/response.dart';
+import 'package:chipmunk/data/network/response/response.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:chipmunk/network/model/symbol.dart';
+import 'package:chipmunk/data/network/model/symbol.dart';
 
 part 'active_symbols_response.g.dart';
 
