@@ -1,5 +1,8 @@
 import 'package:chipmunk/data/network/model/tick.dart';
+import 'package:chipmunk/data/network/model/symbol.dart';
+import 'package:chipmunk/data/network/request/active_symbols_request.dart';
 import 'package:chipmunk/data/network/request/tick_request.dart';
+import 'package:chipmunk/data/network/response/active_symbols_response.dart';
 import 'package:chipmunk/data/network/response/ticks_response.dart';
 import 'package:chipmunk/data/network/service/network_service.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,6 +24,30 @@ void main() async {
               const TicksResponse(Tick(1.0, 'subscriptionId-1'), 'tick'),
               const TicksResponse(Tick(2.0, 'subscriptionId-1'), 'tick'),
               const TicksResponse(Tick(3.0, 'subscriptionId-1'), 'tick'),
+            ]));
+      });
+    });
+  });
+
+  given('NetworkService', () {
+    final NetworkService networkService = MockNetworkService();
+
+    when('send ActiveSymbolsRequest', () {
+      const ActiveSymbolsRequest request = ActiveSymbolsRequest();
+      networkService.send(request);
+      then('responds ActiveSymbolsResponse)', () {
+        expect(
+            networkService.stream,
+            emitsInOrder([
+              const ActiveSymbolsResponse(
+                [
+                  Symbol('Forex', 'Forex', 'AUD/JPY', 'AUD/JPY'),
+                  Symbol('Forex', 'Forex', 'RUB/CNY', 'RUB/CNY'),
+                  Symbol('HKS', 'HKS', 'CNY/USD', 'CNY/USD'),
+                  Symbol('HKS', 'HKS', 'Rice/Wheat', 'Rice/Wheat'),
+                ],
+                'active_symbols',
+              ),
             ]));
       });
     });
