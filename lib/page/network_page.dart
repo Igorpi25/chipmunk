@@ -8,9 +8,10 @@ import 'package:chipmunk/data/network/request/tick_request.dart';
 import 'package:chipmunk/data/network/response/active_symbols_response.dart';
 import 'package:chipmunk/data/network/model/symbol.dart';
 import 'package:chipmunk/data/network/response/forget_response.dart';
+import 'package:chipmunk/data/network/response/response.dart';
 import 'package:chipmunk/data/network/response/ticks_response.dart';
+import 'package:chipmunk/data/network/service/binary_service.dart';
 import 'package:flutter/material.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class NetworkPage extends StatefulWidget {
   const NetworkPage({super.key});
@@ -29,13 +30,11 @@ class _NetworkPageState extends State<NetworkPage> {
   Request _forgetRequest() => ForgetRequest(_lastTickSubscriptionId);
 
   void _requestServer(Request request) {
-    final String json = jsonEncode(request);
-    _channel.sink.add(json);
+    _networkService.send(request);
   }
 
-  final _channel = WebSocketChannel.connect(
-    Uri.parse('wss://ws.binaryws.com/websockets/v3?app_id=1089'),
-  );
+  final _networkService = BinaryService();
+  // final _networkService = MockNetworkService();
 
   @override
   Widget build(BuildContext context) {
@@ -51,39 +50,22 @@ class _NetworkPageState extends State<NetworkPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 StreamBuilder(
-                  stream: _channel.stream,
+                  stream: _networkService.stream,
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final Map<String, dynamic> messageMap =
-                          jsonDecode(snapshot.data);
-
-                      if (messageMap.containsKey('error')) {
-                        return Text('error: ${messageMap['error'].toString()}');
-                      }
-
-                      final msgType = messageMap['msg_type'];
-
-                      if (msgType == 'active_symbols') {
-                        final ActiveSymbolsResponse response =
-                            ActiveSymbolsResponse.fromJson(messageMap);
-
+                    final Response? response = snapshot.data;
+                    if (response != null) {
+                      if (response is ActiveSymbolsResponse) {
                         return _displaySymbols(response.symbols);
-                      } else if (msgType == 'tick') {
-                        final TicksResponse response =
-                            TicksResponse.fromJson(messageMap);
-
+                      } else if (response is TicksResponse) {
                         final Tick tick = response.tick;
 
                         _lastTickSubscriptionId = tick.subscriptionId;
 
                         return _displayTick(tick);
-                      } else if (msgType == 'forget') {
-                        final ForgetResponse response =
-                            ForgetResponse.fromJson(messageMap);
-
+                      } else if (response is ForgetResponse) {
                         return Text(response.toString());
                       } else {
-                        return Text('unknown msg_type: $msgType');
+                        return Text('unknown msg_type: ${response.type}');
                       }
                     }
 
@@ -115,7 +97,7 @@ class _NetworkPageState extends State<NetworkPage> {
 
   @override
   void dispose() {
-    _channel.sink.close();
+    _networkService.dispose();
     super.dispose();
   }
 
