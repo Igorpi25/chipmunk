@@ -1,7 +1,7 @@
-import 'package:chipmunk/bloc/asset_bloc.dart';
-import 'package:chipmunk/bloc/loader_bloc.dart';
-import 'package:chipmunk/bloc/market_bloc.dart';
-import 'package:chipmunk/bloc/price_bloc.dart';
+import 'package:chipmunk/bloc/asset_cubit.dart';
+import 'package:chipmunk/bloc/loader_cubit.dart';
+import 'package:chipmunk/bloc/market_cubit.dart';
+import 'package:chipmunk/bloc/price_cubit.dart';
 import 'package:chipmunk/data/mock/repository/mock_asset_repository.dart';
 import 'package:chipmunk/data/mock/repository/mock_price_repository.dart';
 import 'package:chipmunk/domain/model/asset.dart';
@@ -13,7 +13,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-typedef RevealBloc = LoaderBloc<List<Asset>>;
+typedef RevealCubit = LoaderCubit<List<Asset>>;
 typedef RevealState = LoaderState<List<Asset>>;
 typedef RevealLoadingState = LoadingState<List<Asset>>;
 typedef RevealLoadedState = LoadedState<List<Asset>>;
@@ -83,8 +83,8 @@ class TrackerPage extends StatelessWidget {
                         create: (_) => MockPriceRepository()),
                   ],
                   child: BlocProvider(
-                    create: (_) => MarketBloc(_markets),
-                    child: BlocBuilder<MarketBloc, MarketState>(
+                    create: (_) => MarketCubit(_markets),
+                    child: BlocBuilder<MarketCubit, MarketState>(
                       builder: (context, state) {
                         if (state is MarketsLoaded) {
                           return Column(
@@ -112,9 +112,9 @@ class TrackerPage extends StatelessWidget {
                               BlocProvider(
                                 key: ValueKey(state.market),
                                 create: (_) =>
-                                    RevealBloc(_revealLoader(_, state.market))
-                                      ..add(Load()),
-                                child: BlocBuilder<RevealBloc, RevealState>(
+                                    RevealCubit(_revealLoader(_, state.market))
+                                      ..load(),
+                                child: BlocBuilder<RevealCubit, RevealState>(
                                     builder: (context, state) {
                                   if (state is RevealLoadingState) {
                                     return const PlaceholderDropdown(
@@ -122,8 +122,9 @@ class TrackerPage extends StatelessWidget {
                                   } else if (state is RevealLoadedState) {
                                     return BlocProvider(
                                       key: ValueKey(state.data),
-                                      create: (_) => AssetBloc(state.data),
-                                      child: BlocBuilder<AssetBloc, AssetState>(
+                                      create: (_) => AssetCubit(state.data),
+                                      child:
+                                          BlocBuilder<AssetCubit, AssetState>(
                                         builder: (context, state) {
                                           if (state is AssetsLoaded) {
                                             return RevealedDropdown<
@@ -152,11 +153,11 @@ class TrackerPage extends StatelessWidget {
                                                         context, _)),
                                                 BlocProvider(
                                                   key: ValueKey(state.asset),
-                                                  create: (_) => PriceBloc(
+                                                  create: (_) => PriceCubit(
                                                       _.read<PriceRepository>(),
                                                       state.asset)
-                                                    ..add(StartPrice()),
-                                                  child: BlocBuilder<PriceBloc,
+                                                    ..start(),
+                                                  child: BlocBuilder<PriceCubit,
                                                       PriceState>(
                                                     builder: (context, state) {
                                                       return Container(
@@ -218,11 +219,11 @@ class TrackerPage extends StatelessWidget {
 
   void _marketSelected(
       BuildContext context, MarketDropdownViewmodel viewmodel) {
-    context.read<MarketBloc>().add(SelectMarket(viewmodel.toMarket()));
+    context.read<MarketCubit>().selectMarket(viewmodel.toMarket());
   }
 
   void _assetSelected(BuildContext context, AssetDropdownViewmodel viewmodel) {
-    context.read<AssetBloc>().add(SelectAsset(viewmodel.toAsset()));
+    context.read<AssetCubit>().selectAsset(viewmodel.toAsset());
   }
 
   Future<List<Asset>> _revealLoader(BuildContext context, Market market) async {

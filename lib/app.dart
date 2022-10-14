@@ -1,14 +1,14 @@
 import 'package:chipmunk/domain/model/market.dart';
 import 'package:chipmunk/domain/repository/market_repository.dart';
 import 'package:chipmunk/data/mock/repository/mock_market_repository.dart';
-import 'package:chipmunk/bloc/loader_bloc.dart';
+import 'package:chipmunk/bloc/loader_cubit.dart';
 import 'package:chipmunk/page/loading_page.dart';
 import 'package:chipmunk/page/tracker_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-typedef PageBloc = LoaderBloc<List<Market>>;
+typedef PageCubit = LoaderCubit<List<Market>>;
 typedef PageState = LoaderState<List<Market>>;
 typedef PageLoadingState = LoadingState<List<Market>>;
 typedef PageLoadedState = LoadedState<List<Market>>;
@@ -22,13 +22,13 @@ class App extends StatelessWidget {
       create: (_) => MockMarketRepository(),
       child: BlocProvider(
         create: (_) =>
-            PageBloc(_.read<MarketRepository>().loadMarkets())..add(Load()),
+            PageCubit(_.read<MarketRepository>().loadMarkets())..load(),
         child: MaterialApp(
           title: 'UI Playground',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: BlocBuilder<PageBloc, PageState>(
+          home: BlocBuilder<PageCubit, PageState>(
             builder: (context, state) {
               if (state is PageLoadingState) {
                 return const LoadingPage();

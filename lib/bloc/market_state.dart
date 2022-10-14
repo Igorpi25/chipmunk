@@ -1,4 +1,4 @@
-part of 'market_bloc.dart';
+part of 'market_cubit.dart';
 
 abstract class MarketState extends Equatable {
   @override

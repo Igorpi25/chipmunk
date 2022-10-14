@@ -1,4 +1,4 @@
-part of 'loader_bloc.dart';
+part of 'loader_cubit.dart';
 
 abstract class LoaderState<T> extends Equatable {
   @override

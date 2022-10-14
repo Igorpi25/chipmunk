@@ -1,4 +1,4 @@
-part of 'price_bloc.dart';
+part of 'price_cubit.dart';
 
 abstract class PriceState extends Equatable {
   @override

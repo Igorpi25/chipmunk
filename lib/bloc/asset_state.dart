@@ -1,4 +1,4 @@
-part of 'asset_bloc.dart';
+part of 'asset_cubit.dart';
 
 abstract class AssetState extends Equatable {
   @override
