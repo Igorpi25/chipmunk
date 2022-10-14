@@ -2,6 +2,7 @@ import 'package:chipmunk/data/network/mapper/price_mapper.dart';
 import 'package:chipmunk/data/network/request/active_symbols_request.dart';
 import 'package:chipmunk/data/network/request/tick_request.dart';
 import 'package:chipmunk/data/network/response/active_symbols_response.dart';
+import 'package:chipmunk/data/network/response/response.dart';
 import 'package:chipmunk/data/network/response/ticks_response.dart';
 import 'package:chipmunk/data/network/service/cache_service.dart';
 import 'package:chipmunk/data/network/service/network_service.dart';
@@ -10,8 +11,10 @@ import 'package:chipmunk/domain/model/market.dart';
 import 'package:chipmunk/domain/model/price.dart';
 
 class NetworkUtil {
-  NetworkUtil(this._networkService);
+  NetworkUtil(this._networkService)
+      : _broadcaststream = _networkService.stream.asBroadcastStream();
 
+  final Stream<Response> _broadcaststream;
   final NetworkService _networkService;
   final _cacheService = CacheService();
 
@@ -66,13 +69,13 @@ class NetworkUtil {
   }
 
   Stream<TicksResponse> _hookTickResponse() {
-    return _networkService.stream
+    return _broadcaststream
         .skipWhile((response) => response is! TicksResponse)
         .map<TicksResponse>((response) => response as TicksResponse);
   }
 
   Future<ActiveSymbolsResponse> _hookActiveSymbolsResponse() {
-    return _networkService.stream
+    return _broadcaststream
         .skipWhile((response) => response is! ActiveSymbolsResponse)
         .map<ActiveSymbolsResponse>(
             (response) => response as ActiveSymbolsResponse)

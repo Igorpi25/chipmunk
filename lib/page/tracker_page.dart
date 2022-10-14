@@ -2,8 +2,9 @@ import 'package:chipmunk/bloc/asset_cubit.dart';
 import 'package:chipmunk/bloc/loader_cubit.dart';
 import 'package:chipmunk/bloc/market_cubit.dart';
 import 'package:chipmunk/bloc/price_cubit.dart';
-import 'package:chipmunk/data/mock/repository/mock_asset_repository.dart';
-import 'package:chipmunk/data/mock/repository/mock_price_repository.dart';
+import 'package:chipmunk/data/network/network_util.dart';
+import 'package:chipmunk/data/network/repository/network_asset_repository.dart';
+import 'package:chipmunk/data/network/repository/network_price_repository.dart';
 import 'package:chipmunk/domain/model/asset.dart';
 import 'package:chipmunk/domain/model/market.dart';
 import 'package:chipmunk/domain/repository/asset_repository.dart';
@@ -78,9 +79,11 @@ class TrackerPage extends StatelessWidget {
                 MultiRepositoryProvider(
                   providers: [
                     RepositoryProvider<AssetRepository>(
-                        create: (_) => MockAssetRepository()),
+                        create: (_) =>
+                            NetworkAssetRepository(_.read<NetworkUtil>())),
                     RepositoryProvider<PriceRepository>(
-                        create: (_) => MockPriceRepository()),
+                        create: (_) =>
+                            NetworkPriceRepository(_.read<NetworkUtil>())),
                   ],
                   child: BlocProvider(
                     create: (_) => MarketCubit(_markets),
