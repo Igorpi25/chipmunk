@@ -1,4 +1,4 @@
-import 'package:chipmunk/network/request/request.dart';
+import 'package:chipmunk/data/network/request/request.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'tick_request.g.dart';
