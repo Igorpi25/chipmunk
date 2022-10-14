@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chipmunk/data/mock/model/mock_price.dart';
 import 'package:chipmunk/domain/model/asset.dart';
 import 'package:chipmunk/domain/model/price.dart';
@@ -8,6 +10,7 @@ const _delay = Duration(seconds: 1);
 class MockPriceRepository extends PriceRepository {
   @override
   Stream<Price> tick(Asset asset) {
-    return Stream.periodic(_delay, (_) => MockPrice(_.toDouble(), asset));
+    return Stream.periodic(
+        _delay, (_) => MockPrice(Random().nextInt(5).toDouble(), asset));
   }
 }
