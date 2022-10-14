@@ -21,7 +21,26 @@ class PriceCubit extends Cubit<PriceState> {
   }
 
   void _tick(Price price) {
-    emit(PriceValue(price));
+    final currentState = state;
+    if (currentState is PriceLoading) {
+      emit(StandingValue(price));
+    } else if (currentState is PriceValue) {
+      final prev = currentState.price;
+      final next = price;
+      emit(_getSplittedPriceValue(prev, next));
+    } else {
+      throw Exception('Unknown PriceState');
+    }
+  }
+
+  PriceValue _getSplittedPriceValue(Price prev, Price next) {
+    if (next.value > prev.value) {
+      return GrowingValue(next);
+    } else if (next.value < prev.value) {
+      return DecreasingValue(next);
+    } else {
+      return StandingValue(next);
+    }
   }
 
   @override

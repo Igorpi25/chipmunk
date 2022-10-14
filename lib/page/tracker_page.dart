@@ -174,7 +174,12 @@ class TrackerPage extends StatelessWidget {
                                                           } else if (state
                                                               is PriceValue) {
                                                             return Text(
-                                                                'Price: ${state.price}');
+                                                              'Price: ${state.price}',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      _priceColorByState(
+                                                                          state)),
+                                                            );
                                                           } else {
                                                             throw Exception(
                                                                 'Unknown state in PriceBloc: $state');
@@ -215,6 +220,14 @@ class TrackerPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _priceColorByState(PriceValue state) {
+    if (state is GrowingValue) return Colors.green;
+    if (state is DecreasingValue) return Colors.red;
+    if (state is StandingValue) return Colors.grey;
+
+    throw Exception('Unknown PriceValue state');
   }
 
   void _marketSelected(
