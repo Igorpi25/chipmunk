@@ -15,9 +15,9 @@ class _TicksMockNetworkService extends MockNetworkService<TickRequest> {
   @override
   Iterable<Response> getResponses() {
     return [
-      const TicksResponse(Tick(1.0, 'subscriptionId-1'), 'tick'),
-      const TicksResponse(Tick(2.0, 'subscriptionId-1'), 'tick'),
-      const TicksResponse(Tick(3.0, 'subscriptionId-1'), 'tick'),
+      const TicksResponse(Tick(1.0, 'subscriptionId-1', 'Forex'), 'tick'),
+      const TicksResponse(Tick(2.0, 'subscriptionId-1', 'Forex'), 'tick'),
+      const TicksResponse(Tick(3.0, 'subscriptionId-1', 'Forex'), 'tick'),
     ];
   }
 }

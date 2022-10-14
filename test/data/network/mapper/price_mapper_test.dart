@@ -6,7 +6,7 @@ import 'package:shouldly/shouldly.dart';
 
 void main() {
   given('tick', () {
-    const tick = Tick(1.0, 'subs-id-1.0');
+    const tick = Tick(1.0, 'subs-id-1.0', 'Forex');
     const price = Price(1.0);
 
     when('map tick to price', () {
