@@ -30,7 +30,7 @@ class _NetworkPageState extends State<NetworkPage> {
   Request _forgetRequest() => ForgetRequest(_lastTickSubscriptionId);
 
   void _requestServer(Request request) {
-    _networkService.send(request);
+    _networkService.sink.add(request);
   }
 
   final _networkService = BinaryNetworkService();

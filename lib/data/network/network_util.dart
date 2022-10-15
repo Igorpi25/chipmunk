@@ -21,9 +21,10 @@ class NetworkUtil {
   Stream<Price> getTickStream(Asset asset) {
     _sendTickRequest(asset);
 
-    final ticksStream = _hookTickResponse();
+    //TODO subscribe/forget on specified assets tick: _hookTickResponse(asset);
+    final tickResponseStream = _hookTickResponse();
 
-    final pricesStream = ticksStream
+    final pricesStream = tickResponseStream
         .map<Price>((tickResponse) => PriceMapper.fromTick(tickResponse.tick));
 
     return pricesStream;
@@ -59,13 +60,13 @@ class NetworkUtil {
 
   void _sendTickRequest(Asset asset) {
     final TickRequest tickRequest = TickRequest(asset.id);
-    _networkService.send(tickRequest);
+    _networkService.sink.add(tickRequest);
   }
 
   void _sendActiveSymbolsRequest() {
-    const ActiveSymbolsRequest tickRequest =
+    const ActiveSymbolsRequest activeSymbolsRequest =
         ActiveSymbolsRequest(productType: ProductType.basic);
-    _networkService.send(tickRequest);
+    _networkService.sink.add(activeSymbolsRequest);
   }
 
   Stream<TicksResponse> _hookTickResponse() {

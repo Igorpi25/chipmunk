@@ -45,7 +45,7 @@ void main() async {
     final NetworkService mockService = _TicksMockNetworkService();
     when('send TickRequest', () {
       const TickRequest tickRequest = TickRequest('AUD/JPY');
-      mockService.send(tickRequest);
+      mockService.sink.add(tickRequest);
       then('responds mocked tics)', () {
         expect(
             mockService.stream,
@@ -66,7 +66,7 @@ void main() async {
 
     when('send ActiveSymbolsRequest', () {
       const ActiveSymbolsRequest request = ActiveSymbolsRequest();
-      mockService.send(request);
+      mockService.sink.add(request);
       then('responds ActiveSymbolsResponse)', () {
         expect(
             mockService.stream,

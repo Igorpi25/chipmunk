@@ -10,19 +10,33 @@ import 'package:chipmunk/data/network/service/network_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class BinaryNetworkService extends NetworkService {
-  BinaryNetworkService();
-
   static const _endpoint = 'wss://ws.binaryws.com/websockets/v3?app_id=1089';
-  final WebSocketChannel _channel = WebSocketChannel.connect(
-    Uri.parse(_endpoint),
-  );
+
+  final _channel = WebSocketChannel.connect(Uri.parse(_endpoint));
+
+  final _requestStreamController = StreamController<Request>();
+
+  @override
+  StreamSink<Request> get sink => _requestStreamController.sink;
 
   @override
   Stream<Response> get stream => _channel.stream.transform<Response>(
       StreamTransformer<dynamic, Response>.fromHandlers(
-          handleData: handleMessage));
+          handleData: handleResponse));
 
-  void handleMessage(message, EventSink<Response> sink) {
+  BinaryNetworkService() {
+    final stream = _requestStreamController.stream.transform<String>(
+        StreamTransformer<Request, String>.fromHandlers(
+            handleData: handleRequest));
+    _channel.sink.addStream(stream);
+  }
+
+  void handleRequest(Request request, EventSink<String> sink) {
+    final json = jsonEncode(request);
+    sink.add(json);
+  }
+
+  void handleResponse(message, EventSink<Response> sink) {
     final Map<String, dynamic> messageMap = jsonDecode(message);
 
     if (messageMap.containsKey('error')) {
@@ -42,13 +56,8 @@ class BinaryNetworkService extends NetworkService {
   }
 
   @override
-  void send(Request request) {
-    final json = jsonEncode(request);
-    _channel.sink.add(json);
-  }
-
-  @override
   void dispose() {
     _channel.sink.close();
+    _requestStreamController.close();
   }
 }
