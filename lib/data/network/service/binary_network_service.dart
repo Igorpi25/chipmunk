@@ -16,27 +16,27 @@ class BinaryNetworkService extends NetworkService {
 
   final _requestStreamController = StreamController<Request>();
 
+  BinaryNetworkService() {
+    final stream = _requestStreamController.stream.transform<String>(
+        StreamTransformer<Request, String>.fromHandlers(
+            handleData: _handleRequestData));
+    _channel.sink.addStream(stream);
+  }
+
   @override
   StreamSink<Request> get sink => _requestStreamController.sink;
 
   @override
   Stream<Response> get stream => _channel.stream.transform<Response>(
-      StreamTransformer<dynamic, Response>.fromHandlers(
-          handleData: handleResponse));
+      StreamTransformer<String, Response>.fromHandlers(
+          handleData: _handleStringData));
 
-  BinaryNetworkService() {
-    final stream = _requestStreamController.stream.transform<String>(
-        StreamTransformer<Request, String>.fromHandlers(
-            handleData: handleRequest));
-    _channel.sink.addStream(stream);
-  }
-
-  void handleRequest(Request request, EventSink<String> sink) {
+  void _handleRequestData(Request request, EventSink<String> sink) {
     final json = jsonEncode(request);
     sink.add(json);
   }
 
-  void handleResponse(message, EventSink<Response> sink) {
+  void _handleStringData(String message, EventSink<Response> sink) {
     final Map<String, dynamic> messageMap = jsonDecode(message);
 
     if (messageMap.containsKey('error')) {
