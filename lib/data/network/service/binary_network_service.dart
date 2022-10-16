@@ -14,29 +14,32 @@ class BinaryNetworkService extends NetworkService {
 
   final _channel = WebSocketChannel.connect(Uri.parse(_endpoint));
 
-  final _requestStreamController = StreamController<Request>();
+  final _controller = StreamController<Request>();
 
   BinaryNetworkService() {
-    final stream = _requestStreamController.stream.transform<String>(
-        StreamTransformer<Request, String>.fromHandlers(
-            handleData: _handleRequestData));
-    _channel.sink.addStream(stream);
+    _channel.sink.addStream(_getTransfromedStream<Request, dynamic>(
+        _controller.stream, _handleRequestData));
   }
 
   @override
-  StreamSink<Request> get sink => _requestStreamController.sink;
+  StreamSink<Request> get sink => _controller.sink;
 
   @override
-  Stream<Response> get stream => _channel.stream.transform<Response>(
-      StreamTransformer<String, Response>.fromHandlers(
-          handleData: _handleStringData));
+  Stream<Response> get stream => _getTransfromedStream<dynamic, Response>(
+      _channel.stream, _handleStringData);
 
-  void _handleRequestData(Request request, EventSink<String> sink) {
+  Stream<R> _getTransfromedStream<S, R>(
+      Stream<S> sourceStream, Function(S, EventSink<R>) dataHandler) {
+    return sourceStream.transform<R>(
+        StreamTransformer<S, R>.fromHandlers(handleData: dataHandler));
+  }
+
+  void _handleRequestData(Request request, EventSink<dynamic> sink) {
     final json = jsonEncode(request);
     sink.add(json);
   }
 
-  void _handleStringData(String message, EventSink<Response> sink) {
+  void _handleStringData(dynamic message, EventSink<Response> sink) {
     final Map<String, dynamic> messageMap = jsonDecode(message);
 
     if (messageMap.containsKey('error')) {
@@ -57,7 +60,7 @@ class BinaryNetworkService extends NetworkService {
 
   @override
   void dispose() {
+    _controller.close();
     _channel.sink.close();
-    _requestStreamController.close();
   }
 }
