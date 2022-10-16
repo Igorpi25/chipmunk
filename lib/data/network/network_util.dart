@@ -16,6 +16,7 @@ class NetworkUtil {
 
   final Stream<Response> _broadcaststream;
   final NetworkService _networkService;
+  // TODO move dependency to contrucor argument
   final _cacheService = CacheService();
 
   Stream<Price> getTickStream(Asset asset) {
