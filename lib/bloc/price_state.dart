@@ -7,21 +7,21 @@ abstract class PriceState extends Equatable {
 
 class PriceLoading extends PriceState {}
 
-abstract class PriceValue extends PriceState {
-  PriceValue(this.price);
+abstract class PriceData extends PriceState {
+  PriceData(this.price);
   final Price price;
   @override
   List<Object?> get props => [price];
 }
 
-class GrowingValue extends PriceValue {
+class GrowingValue extends PriceData {
   GrowingValue(super.price);
 }
 
-class DecreasingValue extends PriceValue {
+class DecreasingValue extends PriceData {
   DecreasingValue(super.price);
 }
 
-class StandingValue extends PriceValue {
+class StandingValue extends PriceData {
   StandingValue(super.price);
 }

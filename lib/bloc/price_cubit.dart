@@ -24,7 +24,7 @@ class PriceCubit extends Cubit<PriceState> {
     final currentState = state;
     if (currentState is PriceLoading) {
       emit(StandingValue(price));
-    } else if (currentState is PriceValue) {
+    } else if (currentState is PriceData) {
       final prev = currentState.price;
       final next = price;
       emit(_getSplittedPriceValue(prev, next));
@@ -33,7 +33,7 @@ class PriceCubit extends Cubit<PriceState> {
     }
   }
 
-  PriceValue _getSplittedPriceValue(Price prev, Price next) {
+  PriceData _getSplittedPriceValue(Price prev, Price next) {
     if (next.value > prev.value) {
       return GrowingValue(next);
     } else if (next.value < prev.value) {
