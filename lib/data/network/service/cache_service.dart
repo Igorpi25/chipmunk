@@ -36,6 +36,10 @@ class CacheService {
     final Map<String, List<Asset>> assetsMap = {};
 
     for (var symbol in symbols) {
+      if (!symbol.marketIsOpen) {
+        continue;
+      }
+
       final asset = AssetMapper.fromSymbol(symbol);
 
       if (!assetsMap.containsKey(symbol.market)) {
