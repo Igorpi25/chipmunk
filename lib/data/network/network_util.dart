@@ -1,5 +1,6 @@
 import 'package:chipmunk/data/network/mapper/price_mapper.dart';
 import 'package:chipmunk/data/network/request/active_symbols_request.dart';
+import 'package:chipmunk/data/network/request/forget_request.dart';
 import 'package:chipmunk/data/network/request/tick_request.dart';
 import 'package:chipmunk/data/network/response/active_symbols_response.dart';
 import 'package:chipmunk/data/network/response/response.dart';
@@ -16,19 +17,30 @@ class NetworkUtil {
 
   final Stream<Response> _broadcaststream;
   final NetworkService _networkService;
-  // TODO move dependency to contrucor argument
+  // TODO move dependency to contrucor argument, or smth better
   final _cacheService = CacheService();
 
   Stream<Price> getTickStream(Asset asset) {
     _sendTickRequest(asset);
 
-    //TODO subscribe/forget on specified assets tick: _hookTickResponse(asset);
     final tickResponseStream = _hookTickResponse();
 
-    final pricesStream = tickResponseStream
-        .map<Price>((tickResponse) => PriceMapper.fromTick(tickResponse.tick));
+    final pricesStream = tickResponseStream.where((tickResponse) {
+      return tickResponse.tick.symbol == asset.id;
+    }).map<Price>((tickResponse) => PriceMapper.fromTick(tickResponse.tick));
 
     return pricesStream;
+  }
+
+  void forgetTick(Asset asset) async {
+    final tickResponseStream = _hookTickResponse();
+
+    final tickResponse = await tickResponseStream
+        .firstWhere((tickResponse) => tickResponse.tick.symbol == asset.id);
+
+    final subscriptionId = tickResponse.tick.subscriptionId;
+
+    _sendForgetRequest(subscriptionId);
   }
 
   Future<List<Market>> getMarkets() async {
@@ -64,6 +76,11 @@ class NetworkUtil {
     _networkService.sink.add(tickRequest);
   }
 
+  void _sendForgetRequest(String subscriptionId) {
+    final ForgetRequest tickRequest = ForgetRequest(subscriptionId);
+    _networkService.sink.add(tickRequest);
+  }
+
   void _sendActiveSymbolsRequest() {
     const ActiveSymbolsRequest activeSymbolsRequest =
         ActiveSymbolsRequest(productType: ProductType.basic);
@@ -72,13 +89,13 @@ class NetworkUtil {
 
   Stream<TicksResponse> _hookTickResponse() {
     return _broadcaststream
-        .skipWhile((response) => response is! TicksResponse)
+        .where((response) => response is TicksResponse)
         .map<TicksResponse>((response) => response as TicksResponse);
   }
 
   Future<ActiveSymbolsResponse> _hookActiveSymbolsResponse() {
     return _broadcaststream
-        .skipWhile((response) => response is! ActiveSymbolsResponse)
+        .where((response) => response is ActiveSymbolsResponse)
         .map<ActiveSymbolsResponse>(
             (response) => response as ActiveSymbolsResponse)
         .first;

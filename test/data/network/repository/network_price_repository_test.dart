@@ -30,7 +30,7 @@ void main() async {
     const asset = Asset('aud-jpy-id', 'AUD/JPY');
 
     when('NetworkPriceRepository.tick', () {
-      final stream = repository.tick(asset);
+      final stream = repository.startTicking(asset);
       then('NetworkPriceRepository.stream emits prices', () {
         expect(
             stream,

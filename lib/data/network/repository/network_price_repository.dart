@@ -9,7 +9,12 @@ class NetworkPriceRepository extends PriceRepository {
   final NetworkUtil _networkUtil;
 
   @override
-  Stream<Price> tick(Asset asset) {
+  Stream<Price> startTicking(Asset asset) {
     return _networkUtil.getTickStream(asset);
+  }
+
+  @override
+  void stopTicking(Asset asset) {
+    _networkUtil.forgetTick(asset);
   }
 }

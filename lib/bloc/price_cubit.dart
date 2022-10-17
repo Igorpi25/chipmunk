@@ -17,7 +17,7 @@ class PriceCubit extends Cubit<PriceState> {
   void start() async {
     _tickerSubscription?.cancel();
     _tickerSubscription =
-        _priceRepository.tick(_asset).listen((price) => _tick(price));
+        _priceRepository.startTicking(_asset).listen((price) => _tick(price));
   }
 
   void _tick(Price price) {
@@ -46,6 +46,7 @@ class PriceCubit extends Cubit<PriceState> {
   @override
   Future<void> close() {
     _tickerSubscription?.cancel();
+    _priceRepository.stopTicking(_asset);
     return super.close();
   }
 }

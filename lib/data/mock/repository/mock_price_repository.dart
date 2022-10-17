@@ -9,8 +9,11 @@ const _delay = Duration(seconds: 1);
 
 class MockPriceRepository extends PriceRepository {
   @override
-  Stream<Price> tick(Asset asset) {
+  Stream<Price> startTicking(Asset asset) {
     return Stream.periodic(
         _delay, (_) => MockPrice(Random().nextInt(5).toDouble(), asset));
   }
+
+  @override
+  void stopTicking(Asset asset) {}
 }
