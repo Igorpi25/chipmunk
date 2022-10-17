@@ -2,9 +2,6 @@ import 'package:chipmunk/bloc/asset_cubit.dart';
 import 'package:chipmunk/bloc/loader_cubit.dart';
 import 'package:chipmunk/bloc/market_cubit.dart';
 import 'package:chipmunk/bloc/price_cubit.dart';
-import 'package:chipmunk/data/network/network_util.dart';
-import 'package:chipmunk/data/network/repository/network_asset_repository.dart';
-import 'package:chipmunk/data/network/repository/network_price_repository.dart';
 import 'package:chipmunk/domain/model/asset.dart';
 import 'package:chipmunk/domain/model/market.dart';
 import 'package:chipmunk/domain/repository/asset_repository.dart';
@@ -20,9 +17,12 @@ typedef RevealLoadingState = LoadingState<List<Asset>>;
 typedef RevealLoadedState = LoadedState<List<Asset>>;
 
 class TrackerPage extends StatelessWidget {
-  const TrackerPage(this._markets, {super.key});
+  const TrackerPage(this._markets, this._priceRepository, this._assetRepository,
+      {super.key});
 
   final List<Market> _markets;
+  final PriceRepository _priceRepository;
+  final AssetRepository _assetRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -36,22 +36,10 @@ class TrackerPage extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 400, maxHeight: 300),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _repositoryProvider(_marketsSection()),
+            child: _marketsSection(),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _repositoryProvider(Widget child) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<AssetRepository>(
-            create: (_) => NetworkAssetRepository(_.read<NetworkUtil>())),
-        RepositoryProvider<PriceRepository>(
-            create: (_) => NetworkPriceRepository(_.read<NetworkUtil>())),
-      ],
-      child: child,
     );
   }
 
@@ -166,10 +154,10 @@ class TrackerPage extends StatelessWidget {
   }
 
   Widget _priceSection(AssetSelected state) {
-    return BlocProvider(
+    return BlocProvider<PriceCubit>(
       key: ValueKey(state.asset),
-      create: (_) =>
-          PriceCubit(_.read<PriceRepository>(), state.asset)..start(),
+      create: (BuildContext context) =>
+          PriceCubit(_priceRepository, state.asset)..start(),
       child: BlocBuilder<PriceCubit, PriceState>(
         builder: (context, state) {
           return Container(
@@ -209,7 +197,7 @@ class TrackerPage extends StatelessWidget {
   }
 
   Future<List<Asset>> _revealLoader(BuildContext context, Market market) async {
-    return context.read<AssetRepository>().loadAssets(market);
+    return _assetRepository.loadAssets(market);
   }
 }
 
