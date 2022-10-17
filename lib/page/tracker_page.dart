@@ -176,9 +176,8 @@ class TrackerPage extends StatelessWidget {
                                                             return const CircularProgressIndicator();
                                                           } else if (state
                                                               is PriceValue) {
-                                                            // TODO add pulse indicator
                                                             return Text(
-                                                              'Price: ${state.price}',
+                                                              'Price: ${state.price.value}',
                                                               style: TextStyle(
                                                                   color:
                                                                       _priceColorByState(
