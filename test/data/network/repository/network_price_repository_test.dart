@@ -15,9 +15,9 @@ class _TicksMockNetworkService extends MockNetworkService<TickRequest> {
   @override
   Iterable<Response> getResponses() {
     return [
-      const TicksResponse(Tick(1.0, 'subscriptionId-1', 'Forex'), 'tick'),
-      const TicksResponse(Tick(2.0, 'subscriptionId-1', 'Forex'), 'tick'),
-      const TicksResponse(Tick(3.0, 'subscriptionId-1', 'Forex'), 'tick'),
+      const TicksResponse(Tick(1.0, 'subscriptionId-1', 'AUD/JPY'), 'tick'),
+      const TicksResponse(Tick(2.0, 'subscriptionId-1', 'AUD/JPY'), 'tick'),
+      const TicksResponse(Tick(3.0, 'subscriptionId-1', 'AUD/JPY'), 'tick'),
     ];
   }
 }
@@ -27,9 +27,9 @@ void main() async {
     final networkService = _TicksMockNetworkService();
     final networkUtil = NetworkUtil(networkService);
     final repository = NetworkPriceRepository(networkUtil);
-    const asset = Asset('aud-jpy-id', 'AUD/JPY');
+    const asset = Asset('AUD/JPY', 'AUD/JPY');
 
-    when('NetworkPriceRepository.tick', () {
+    when('NetworkPriceRepository.startTicking', () {
       final stream = repository.startTicking(asset);
       then('NetworkPriceRepository.stream emits prices', () {
         expect(
