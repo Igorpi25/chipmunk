@@ -1,8 +1,48 @@
-# chipmunk
+# Price Tracker
 
-A new Flutter project.
+Demo project for Flutter/BLoC(Cubit)/Websocket stack. Author made practice on CleanArchitecture and Solid. Somewhere you can meet unit-tests remaining after authors TDD plays.
 
-## Getting Started
+## Architecture
+
+- [domain]()
+  * [model]()
+    * asset.dart
+    * market.dart
+    * price.dart
+  * [repository]()
+    * asse_repository.dart
+    * market_repository.dart
+    * price_repository.dart
+- [data]()
+  * [network]()
+    * [mapper/]()
+      * asset_mapper.dart
+      * market_mapper.dart
+      * price_mapper.dart
+    * [model/]()
+      * symbol.dart
+      * tick.dart
+    * [repository/]()
+      * network_asset_repository.dart
+      * network_market_repository.dart
+      * network_price_repository.dart
+    * [request/]()
+      * request.dart
+      * active_symbol_request.dart
+      * forget_request.dart
+      * tick_request.dart
+    * [response/]()
+      * request.dart
+      * active_symbol_response.dart
+      * forget_request.dart
+      * tick_response.dart
+    * [service/]()
+      * network_service.dart
+      * cache_service.dart
+      * binary_network_service.dart
+    * network_util.dart
+- [presentation]()
+- [ui_kit]()
 
 This project is a starting point for a Flutter application.
 
