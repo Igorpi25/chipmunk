@@ -2,6 +2,12 @@
 
 Demo project for Flutter/BLoC(Cubit)/Websocket stack. Author made practice on CleanArchitecture and Solid. Somewhere you can meet unit-tests remaining after authors TDD plays.
 
+## Live sample:
+
+<img src="../media/screenshot_tracker_1.png?raw=true" height="300">
+
+[Click to open](https://igorpi25.com/chipmunk/#/)
+
 ## Table Of Contents
 
 - [Architecture](#architecture-layers)
