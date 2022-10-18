@@ -9,12 +9,16 @@ class PriceSection extends StatelessWidget {
 
   final Asset _asset;
 
+  PriceRepository _getPriceRepository(context) {
+    return context.read<PriceRepository>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PriceCubit>(
       key: ValueKey(_asset),
       create: (BuildContext context) =>
-          PriceCubit(context.read<PriceRepository>(), _asset)..start(),
+          PriceCubit(_getPriceRepository(context), _asset)..start(),
       child: BlocBuilder<PriceCubit, PriceState>(
         builder: (context, state) {
           return Container(

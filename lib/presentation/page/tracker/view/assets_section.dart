@@ -1,6 +1,6 @@
 import 'package:chipmunk/domain/model/asset.dart';
 import 'package:chipmunk/presentation/page/tracker/bloc/asset_cubit.dart';
-import 'package:chipmunk/presentation/page/tracker/view/dropdown.dart';
+import 'package:chipmunk/ui_kit/dropdown.dart';
 import 'package:chipmunk/presentation/page/tracker/view/price_section.dart';
 import 'package:chipmunk/presentation/page/tracker/viewmodel/asset_dropdown_viewmodel.dart';
 import 'package:flutter/material.dart';

@@ -1,11 +1,11 @@
 import 'package:chipmunk/domain/model/asset.dart';
 import 'package:chipmunk/domain/model/market.dart';
 import 'package:chipmunk/domain/repository/asset_repository.dart';
-import 'package:chipmunk/presentation/bloc/loader_cubit.dart';
 import 'package:chipmunk/presentation/page/tracker/bloc/market_cubit.dart';
 import 'package:chipmunk/presentation/page/tracker/view/assets_section.dart';
-import 'package:chipmunk/presentation/page/tracker/view/dropdown.dart';
 import 'package:chipmunk/presentation/page/tracker/viewmodel/market_dropdown_viewmodel.dart';
+import 'package:chipmunk/presentation/common_bloc/loader_cubit.dart';
+import 'package:chipmunk/ui_kit/dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,6 +18,14 @@ class MarketsSection extends StatelessWidget {
   const MarketsSection(this._markets, {super.key});
 
   final List<Market> _markets;
+
+  AssetRepository _getAssetRepository(context) {
+    return context.read<AssetRepository>();
+  }
+
+  MarketCubit _getMarketCubit(context) {
+    return context.read<MarketCubit>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +85,7 @@ class MarketsSection extends StatelessWidget {
     return BlocProvider(
       key: ValueKey(state.market),
       create: (_) =>
-          RevealCubit(_.read<AssetRepository>().loadAssets(state.market))
+          RevealCubit(_getAssetRepository(context).loadAssets(state.market))
             ..load(),
       child: BlocBuilder<RevealCubit, RevealState>(builder: (context, state) {
         if (state is RevealLoadingState) {
@@ -93,6 +101,6 @@ class MarketsSection extends StatelessWidget {
 
   void _marketSelected(
       BuildContext context, MarketDropdownViewmodel viewmodel) {
-    context.read<MarketCubit>().selectMarket(viewmodel.toMarket());
+    _getMarketCubit(context).selectMarket(viewmodel.toMarket());
   }
 }
