@@ -19,11 +19,11 @@ class MarketsSection extends StatelessWidget {
 
   final List<Market> _markets;
 
-  AssetRepository _getAssetRepository(context) {
+  AssetRepository _getAssetRepository(BuildContext context) {
     return context.read<AssetRepository>();
   }
 
-  MarketCubit _getMarketCubit(context) {
+  MarketCubit _getMarketCubit(BuildContext context) {
     return context.read<MarketCubit>();
   }
 

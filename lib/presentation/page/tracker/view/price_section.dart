@@ -9,7 +9,7 @@ class PriceSection extends StatelessWidget {
 
   final Asset _asset;
 
-  PriceRepository _getPriceRepository(context) {
+  PriceRepository _getPriceRepository(BuildContext context) {
     return context.read<PriceRepository>();
   }
 
