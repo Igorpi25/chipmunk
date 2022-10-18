@@ -2,7 +2,17 @@
 
 Demo project for Flutter/BLoC(Cubit)/Websocket stack. Author made practice on CleanArchitecture and Solid. Somewhere you can meet unit-tests remaining after authors TDD plays.
 
-## Architecture layers (according Clean Architecture)
+## Table Of Contents
+
+- [Architecture](#architecture-layers)
+  * [Domain](#domain)
+  * [Data](#data)
+  * [Presentation](#presentation)
+- [Features overview](#features-overview)
+  * [Forget subscription](#forget-subscription)
+  * [Price text color](#price-text-color)
+
+## Architecture
 
 In this demonstration app we use only some Layers presented in Clean Architecture approach:
 
@@ -113,7 +123,7 @@ Flutter's default DropdownButton widget has extremely unconvinient and leads to 
 
 ## Features overview
  
-### How forget_request does work?
+### Forget subscription
 
 When Flutter engine make deattaching `PriceCubit` from Widgets tree it calls `PriceCubit.close()`, inside of that we calling `priceRepository.stopTicking(_asset);` where `_asset` is `Asset`(domain model).
 
