@@ -5,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PriceSection extends StatelessWidget {
-  const PriceSection(this._asset, this._priceRepository, {super.key});
+  const PriceSection(this._asset, {super.key});
 
   final Asset _asset;
-  final PriceRepository _priceRepository;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PriceCubit>(
       key: ValueKey(_asset),
       create: (BuildContext context) =>
-          PriceCubit(_priceRepository, _asset)..start(),
+          PriceCubit(context.read<PriceRepository>(), _asset)..start(),
       child: BlocBuilder<PriceCubit, PriceState>(
         builder: (context, state) {
           return Container(

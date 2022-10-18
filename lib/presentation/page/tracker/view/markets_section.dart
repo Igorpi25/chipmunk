@@ -1,22 +1,23 @@
+import 'package:chipmunk/domain/model/asset.dart';
 import 'package:chipmunk/domain/model/market.dart';
 import 'package:chipmunk/domain/repository/asset_repository.dart';
-import 'package:chipmunk/domain/repository/price_repository.dart';
+import 'package:chipmunk/presentation/bloc/loader_cubit.dart';
 import 'package:chipmunk/presentation/page/tracker/bloc/market_cubit.dart';
-import 'package:chipmunk/presentation/page/tracker/tracker_page.dart';
 import 'package:chipmunk/presentation/page/tracker/view/assets_section.dart';
 import 'package:chipmunk/presentation/page/tracker/view/dropdown.dart';
 import 'package:chipmunk/presentation/page/tracker/viewmodel/market_dropdown_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+typedef RevealCubit = LoaderCubit<List<Asset>>;
+typedef RevealState = LoaderState<List<Asset>>;
+typedef RevealLoadingState = LoadingState<List<Asset>>;
+typedef RevealLoadedState = LoadedState<List<Asset>>;
+
 class MarketsSection extends StatelessWidget {
-  const MarketsSection(
-      this._markets, this._assetRepository, this._priceRepository,
-      {super.key});
+  const MarketsSection(this._markets, {super.key});
 
   final List<Market> _markets;
-  final AssetRepository _assetRepository;
-  final PriceRepository _priceRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -76,13 +77,14 @@ class MarketsSection extends StatelessWidget {
     return BlocProvider(
       key: ValueKey(state.market),
       create: (_) =>
-          RevealCubit(_assetRepository.loadAssets(state.market))..load(),
+          RevealCubit(_.read<AssetRepository>().loadAssets(state.market))
+            ..load(),
       child: BlocBuilder<RevealCubit, RevealState>(builder: (context, state) {
         if (state is RevealLoadingState) {
           return const PlaceholderDropdown('Assets loading ...');
         }
         if (state is RevealLoadedState) {
-          return AssetsSection(state.data, _priceRepository);
+          return AssetsSection(state.data);
         }
         throw Exception('Unknown state in RevealCubit: $state');
       }),

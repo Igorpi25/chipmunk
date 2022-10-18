@@ -9,14 +9,21 @@ import 'package:chipmunk/domain/repository/market_repository.dart';
 import 'package:chipmunk/domain/repository/price_repository.dart';
 import 'package:flutter/widgets.dart';
 import 'package:chipmunk/presentation/app.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   final NetworkService networkService = BinaryNetworkService();
   final NetworkUtil networkUtil = NetworkUtil(networkService);
 
-  final PriceRepository priceRepository = NetworkPriceRepository(networkUtil);
-  final AssetRepository assetRepository = NetworkAssetRepository(networkUtil);
-  MarketRepository marketRepository = NetworkMarketRepository(networkUtil);
-
-  runApp(App(priceRepository, assetRepository, marketRepository));
+  runApp(MultiRepositoryProvider(
+    providers: [
+      RepositoryProvider<MarketRepository>(
+          create: (_) => NetworkMarketRepository(networkUtil)),
+      RepositoryProvider<AssetRepository>(
+          create: (_) => NetworkAssetRepository(networkUtil)),
+      RepositoryProvider<PriceRepository>(
+          create: (_) => NetworkPriceRepository(networkUtil)),
+    ],
+    child: const App(),
+  ));
 }

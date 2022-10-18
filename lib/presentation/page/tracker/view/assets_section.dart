@@ -1,5 +1,4 @@
 import 'package:chipmunk/domain/model/asset.dart';
-import 'package:chipmunk/domain/repository/price_repository.dart';
 import 'package:chipmunk/presentation/page/tracker/bloc/asset_cubit.dart';
 import 'package:chipmunk/presentation/page/tracker/view/dropdown.dart';
 import 'package:chipmunk/presentation/page/tracker/view/price_section.dart';
@@ -8,10 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AssetsSection extends StatelessWidget {
-  const AssetsSection(this._assets, this._priceRepository, {super.key});
+  const AssetsSection(this._assets, {super.key});
 
   final List<Asset> _assets;
-  final PriceRepository _priceRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +25,7 @@ class AssetsSection extends StatelessWidget {
             return Column(
               children: [
                 _statedAssetSection(context, state),
-                PriceSection(state.asset, _priceRepository),
+                PriceSection(state.asset),
               ],
             );
           }

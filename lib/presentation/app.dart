@@ -1,7 +1,5 @@
 import 'package:chipmunk/domain/model/market.dart';
-import 'package:chipmunk/domain/repository/asset_repository.dart';
 import 'package:chipmunk/domain/repository/market_repository.dart';
-import 'package:chipmunk/domain/repository/price_repository.dart';
 import 'package:chipmunk/presentation/page/loader/loader_page.dart';
 import 'package:chipmunk/presentation/page/tracker/tracker_page.dart';
 import 'package:chipmunk/presentation/bloc/loader_cubit.dart';
@@ -15,13 +13,7 @@ typedef PageLoadingState = LoadingState<List<Market>>;
 typedef PageLoadedState = LoadedState<List<Market>>;
 
 class App extends StatelessWidget {
-  const App(
-      this._priceRepository, this._assetRepository, this._marketRepository,
-      {super.key});
-
-  final PriceRepository _priceRepository;
-  final AssetRepository _assetRepository;
-  final MarketRepository _marketRepository;
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +23,10 @@ class App extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: BlocBuilder<PageCubit, PageState>(
-        bloc: PageCubit(_marketRepository.loadMarkets())..load(),
+        bloc: PageCubit(context.read<MarketRepository>().loadMarkets())..load(),
         builder: (context, state) {
           if (state is PageLoadedState) {
-            return TrackerPage(state.data, _priceRepository, _assetRepository);
+            return TrackerPage(state.data);
           }
           if (state is LoadingState) {
             return const LoaderPage();
