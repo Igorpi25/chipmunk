@@ -69,14 +69,6 @@ Used to store the result of `active_symbol_request` in cache map. We do this to 
       * binary_network_service.dart
     * network_util.dart
 
-
-**How forget_request does work?**
-
-When Flutter engine make deattaching `PriceCubit` from Widgets tree it calls `PriceCubit.close()`, inside of that we calling `priceRepository.stopTicking(_asset);` where `_asset` is `Asset`(domain model).
-
-Then inside `NetworkUtil` we call `forgetTick()`. The idea of this method is to hookup proper `Tick` response with necessary `subscriptionId`. After hook we send `forget_request(subscriptionID)` only for specified subscription. Mechanism is non-trivial, but helps to avoid keep additional `Map<Asset, subcriptionID>`
-
-
 ### Presentation
 
 Consists from two page: `tracker_page`, `tracker_page`:
@@ -120,6 +112,19 @@ Used to display some LoadingState while await for `Future<T>`. There two cases w
 Flutter's default DropdownButton widget has extremely unconvinient and leads to "spaghetti code". Author made his own implementation based on DropdownButton. *It didn't help much, indeed*
 
 ## Features overview
+ 
+### How forget_request does work?
 
-**Price color**
+When Flutter engine make deattaching `PriceCubit` from Widgets tree it calls `PriceCubit.close()`, inside of that we calling `priceRepository.stopTicking(_asset);` where `_asset` is `Asset`(domain model).
+
+Then inside `NetworkUtil` we call `forgetTick()`. The idea of this method is to hookup proper `Tick` response with necessary `subscriptionId`. After hook we send `forget_request(subscriptionID)` only for specified subscription. Mechanism is non-trivial, but helps to avoid keep additional `Map<Asset, subcriptionID>`
+
+
+### Price text color
+
+Please, take your look on `presentation/page/tracker/block/`. Here is `price_cubit.dart` inside which `_getSplittedPriceValue(prev, next)` method. This method compares `prev` and `next` and return "colored" PriceState.
+
+`PriceData` state is splitted to three: `GrowingValue`, `DecreasingValue`, `StandingValue` child states. 
+ 
+ And, please, open `price_section.dart` from `presentation/page/tracker/view/`, here you'd find _priceColorByState() method where splitted states become to material color.
  
