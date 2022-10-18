@@ -82,6 +82,9 @@ Used to store the result of `active_symbol_request` in cache map. We do this to 
 ### Presentation
 
 Consists from two page: `tracker_page`, `tracker_page`:
+<img src="../media/screenshot_loader.png?raw=true" height="400">  |  <img src="../media/screenshot_tracker_0.png?raw=true" height="400"> | <img src="../media/screenshot_tracker_1.png?raw=true" height="400"> |
+:-------------------------:|:-------------------------:|:-------------------------:
+`loader_page.dart`             |  `tracker_page.dart`(markets) | `tracker_page.dart`(markets/assets/price) |
 
 1. Loader page hasn't any business logic. Initial loader screen's Bloc is placed in app.dart, there we use "special" `common_bloc/loader`, please look below.
 2. Tracker consists from three nested views: markets_section, assets_section, price_section. Each of them depends on other: `markets(assets(price))`. Required repositories are injected from app.dart through engines context.read<T>. 
