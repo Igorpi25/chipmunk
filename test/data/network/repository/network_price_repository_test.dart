@@ -27,7 +27,7 @@ void main() async {
     final networkService = _TicksMockNetworkService();
     final networkUtil = NetworkUtil(networkService);
     final repository = NetworkPriceRepository(networkUtil);
-    const asset = Asset('aud-jpy-id', 'AUD/JPY');
+    const asset = Asset('Forex', 'Forex');
 
     when('NetworkPriceRepository.tick', () {
       final stream = repository.startTicking(asset);
