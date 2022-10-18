@@ -35,8 +35,9 @@ class NetworkUtil {
   void forgetTick(Asset asset) async {
     final tickResponseStream = _hookTickResponse();
 
-    final tickResponse = await tickResponseStream
-        .firstWhere((tickResponse) => tickResponse.tick.symbol == asset.id);
+    final tickResponse = await tickResponseStream.firstWhere((tickResponse) {
+      return tickResponse.tick.symbol == asset.id;
+    });
 
     final subscriptionId = tickResponse.tick.subscriptionId;
 
