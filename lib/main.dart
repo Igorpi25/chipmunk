@@ -8,7 +8,7 @@ import 'package:chipmunk/domain/repository/asset_repository.dart';
 import 'package:chipmunk/domain/repository/market_repository.dart';
 import 'package:chipmunk/domain/repository/price_repository.dart';
 import 'package:flutter/widgets.dart';
-import 'package:chipmunk/app.dart';
+import 'package:chipmunk/presentation/app.dart';
 
 void main() {
   final NetworkService networkService = BinaryNetworkService();
