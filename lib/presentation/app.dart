@@ -15,7 +15,7 @@ typedef PageLoadedState = LoadedState<List<Market>>;
 class App extends StatelessWidget {
   const App({super.key});
 
-  MarketRepository _getMarketRepository(context) {
+  MarketRepository _getMarketRepository(BuildContext context) {
     return context.read<MarketRepository>();
   }
 
