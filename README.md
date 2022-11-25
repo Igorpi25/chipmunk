@@ -1,6 +1,6 @@
 # Price Tracker
 
-Demo project for Flutter/BLoC(Cubit)/Websocket stack. Author made practice on CleanArchitecture and Solid. Somewhere you can meet unit-tests remaining after authors TDD plays.
+Demo project for [Flutter][1]/[BLoC(Cubit)][2]/[Websocket][3] stack. Author made practice on CleanArchitecture and Solid. Somewhere you can meet unit-tests remaining after authors [TDD][4] plays.
 
 ## Live sample:
 
@@ -148,3 +148,7 @@ The `PriceData` state is splitted to three: `GrowingValue`, `DecreasingValue`, `
  
 And, please, open [`price_section.dart`](presentation/page/tracker/view/price_section.dart) from `presentation/page/tracker/view/`, here you'd find _priceColorByState() method where splitted states become to material color.
  
+[1]:https://docs.flutter.dev/get-started/install
+[2]:https://pub.dev/packages/flutter_bloc
+[3]:https://pub.dev/packages/web_socket_channel
+[4]:https://en.wikipedia.org/wiki/Test-driven_development
