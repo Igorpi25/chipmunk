@@ -10,9 +10,14 @@ import 'package:chipmunk/domain/repository/price_repository.dart';
 import 'package:flutter/widgets.dart';
 import 'package:chipmunk/presentation/app.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+const _endpoint = 'wss://ws.binaryws.com/websockets/v3?app_id=1089';
 
 void main() {
-  final NetworkService networkService = BinaryNetworkService();
+  
+  final WebSocketChannel webSocketChannel = WebSocketChannel.connect(Uri.parse(_endpoint));
+  final NetworkService networkService = BinaryNetworkService(webSocketChannel);
   final NetworkUtil networkUtil = NetworkUtil(networkService);
 
   runApp(MultiRepositoryProvider(

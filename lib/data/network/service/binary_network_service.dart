@@ -10,16 +10,15 @@ import 'package:chipmunk/data/network/service/network_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class BinaryNetworkService extends NetworkService {
-  static const _endpoint = 'wss://ws.binaryws.com/websockets/v3?app_id=1089';
 
-  final _channel = WebSocketChannel.connect(Uri.parse(_endpoint));
-
-  final _controller = StreamController<Request>();
-
-  BinaryNetworkService() {
+  BinaryNetworkService(this._channel) {
     _channel.sink.addStream(_getTransfromedStream<Request, dynamic>(
         _controller.stream, _handleRequestData));
   }
+
+  final WebSocketChannel _channel;
+  
+  final _controller = StreamController<Request>();
 
   @override
   StreamSink<Request> get sink => _controller.sink;
