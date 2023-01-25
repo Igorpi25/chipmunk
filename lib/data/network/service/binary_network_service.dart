@@ -10,14 +10,15 @@ import 'package:chipmunk/data/network/service/network_service.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class BinaryNetworkService extends NetworkService {
-
+  // TODO avoid actions in contructor.
+  // perhaps better use Adapter/Decorator-pattern?
   BinaryNetworkService(this._channel) {
     _channel.sink.addStream(_getTransfromedStream<Request, dynamic>(
         _controller.stream, _handleRequestData));
   }
 
   final WebSocketChannel _channel;
-  
+
   final _controller = StreamController<Request>();
 
   @override
